@@ -1,0 +1,37 @@
+{
+  "name": "RunFromNextbot",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      }
+    },
+
+    "ServerScriptService": {
+      "Server": {
+        "$path": "src/server"
+      }
+    },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "Rojo_Scripts": {
+          "$path": "src/StarterPlayer/StarterPlayerScripts"
+        }
+      },
+      "StarterCharacterScripts": {
+        "Rojo_Scripts": {
+          "$path": "src/StarterPlayer/StarterCharacterScripts"
+       }
+      }
+    },
+    "ServerStorage":{
+      "Rojo_Scripts":{
+        "$path": "src/ServerStorage"
+      }
+    }
+  }
+}
