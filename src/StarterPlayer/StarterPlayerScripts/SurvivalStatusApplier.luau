@@ -8,6 +8,4 @@ StatusEvent.OnClientEvent:Connect(function(Status, duration)
 	AbilitySurvconsequence.ApplyStatus(Status, duration)
 end)
 
-task.wait(3)
-AbilitySurvconsequence.ApplyStatus("FieldOfView", 3)
 return SurvivalStatusApplier

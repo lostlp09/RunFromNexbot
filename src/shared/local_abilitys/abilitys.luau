@@ -52,8 +52,7 @@ function localabiltys.Rocket(player: Player)
 end
 
 function localabiltys.FieldOfView()
-	--local FieldOfView = game.Lighting.DepthOfField
-	--local Atmosphere = game.Lighting.Atmosphere
+	print("Cool")
 end
 
 return localabiltys

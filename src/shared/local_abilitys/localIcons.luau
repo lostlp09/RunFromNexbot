@@ -7,7 +7,8 @@ function abilityicon.createui(player: Player, index, Ability)
 		UDim2.new(originalpos.X.Scale, 0, originalpos.Y.Scale - (originalsize.Y.Scale + 0.05) * (index - 1), 0) --- (originalsize.Y.Scale) * index,0 )
 	local Ui = game.ReplicatedFirst.uiconecept.UiAbilityIcon:Clone()
 	Ui.Position = buttonposition
-	Ui.Parent = player.PlayerGui:FindFirstChild("AbilityUi")
+	Ui.Parent = player.PlayerGui:FindFirstChild("AbilityUI")
+	print(player, Ui.Parent)
 	abilityicon[Ability](Ui)
 	return Ui
 end
@@ -38,6 +39,12 @@ function abilityicon.Rocket(ui)
 	imageobject.Image = "rbxassetid://11375297133"
 	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
 	AbilityText.Text = "Rocket hehehehea"
+end
+function abilityicon.FieldOfView(ui)
+	local imageobject: ImageLabel = ui.Icon
+	imageobject.Image = "rbxassetid://11375297133"
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
+	AbilityText.Text = "I can Blind Enemys im tuff"
 end
 
 return abilityicon

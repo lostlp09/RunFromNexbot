@@ -1,5 +1,5 @@
 local createNextBot = {}
 
-createNextBot.CoolGuy = { "CoolGuy", "rbxassetid://11375297133", 64, true, "ShapeShift", "Rocket", nil }
+createNextBot.Royal = { "Royal", "rbxassetid://11375297133", 64, true, "FieldOfView", "Rocket", nil }
 
 return createNextBot

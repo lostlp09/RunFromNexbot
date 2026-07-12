@@ -1,8 +1,8 @@
 local NormalAbilitys = {}
 NormalAbilitys.__index = NormalAbilitys
-local TweenService = game:GetService("TweenService")
 local Runservice = game:GetService("RunService")
 local PlayerService = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 function NormalAbilitys.new(Ability: string, classproperties)
 	if NormalAbilitys[Ability] == nil then
 		return false
@@ -31,6 +31,7 @@ end
 NormalAbilitys.Data = {
 	Beam = { cooldown = 3, Name = "Beam" },
 	Rocket = { cooldown = 10, Name = "Rocket" },
+	FieldOfView = { cooldown = 20, Name = "FieldOfView" },
 }
 
 NormalAbilitys.Beam = function(playerclassproperties)
@@ -76,8 +77,10 @@ function NormalAbilitys.Rocket(playerclassproperties)
 	local root = Character:FindFirstChild("HumanoidRootPart")
 	local PossibleCandidates = {}
 	for _, Enemyplayer: Player in game.Players:GetChildren() do
-		if Enemyplayer.Team == game.Teams.Survivor and player.Character then
-			table.insert(PossibleCandidates, player)
+		print("run my little boy")
+		if Enemyplayer.Team == game.Teams.Survivor and Enemyplayer.Character then
+			print(Enemyplayer, Enemyplayer.Team, "Very Important")
+			table.insert(PossibleCandidates, Enemyplayer)
 		end
 	end
 	for _ = 1, 3, 1 do
@@ -87,11 +90,12 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		end
 		local RandomIndex = math.random(1, #PossibleCandidates)
 		local Randomplayer = PossibleCandidates[RandomIndex]
-		local Rootpart: BasePart = Randomplayer.Character.HumanoidRootPart
+		local EnemyRootpart: BasePart = Randomplayer.Character.HumanoidRootPart
+		print(Randomplayer, "is the Random Player")
 		local Raycastprop = RaycastParams.new()
 		Raycastprop.CollisionGroup = "player"
 		local RayCast = game.Workspace:Raycast(
-			Vector3.new(Rootpart.Position.X, 200, Rootpart.Position.Z),
+			Vector3.new(EnemyRootpart.Position.X, 200, EnemyRootpart.Position.Z),
 			Vector3.new(0, -500, 0),
 			Raycastprop
 		)
@@ -108,12 +112,11 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		local direction = RayCast.Normal
 		Indicator:PivotTo(
 			CFrame.lookAt(
-				Vector3.new(Rootpart.Position.X, RayCast.Position.Y, Rootpart.Position.Z) + direction * 0.1,
-				Vector3.new(Rootpart.Position.X, RayCast.Position.Y, Rootpart.Position.Z) + direction
+				Vector3.new(EnemyRootpart.Position.X, RayCast.Position.Y, EnemyRootpart.Position.Z) + direction * 0.1,
+				Vector3.new(EnemyRootpart.Position.X, RayCast.Position.Y, EnemyRootpart.Position.Z) + direction
 			)
 		)
-
-		local PlayerPosition: Vector3 = Rootpart.Position
+		local PlayerPosition: Vector3 = EnemyRootpart.Position
 		local Gravity = workspace.Gravity
 		local RocketStarthight = 10
 		Killbox.CanTouch = true
@@ -129,7 +132,7 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		local Speed = Distance / Time
 
 		Rocket.AssemblyLinearVelocity = DirectionUnit * Speed + Vector3.new(0, StartVelocityY, 0)
-		RunServiceCon = Runservice.Heartbeat:Connect(function(delta)
+		RunServiceCon = Runservice.Heartbeat:Connect(function()
 			if not Rocket then
 				RunServiceCon:Disconnect()
 			end
@@ -152,13 +155,12 @@ function NormalAbilitys.Rocket(playerclassproperties)
 			print("wie oft wird der Code ausgeführt")
 			local Humanoid: Humanoid = Part.Parent:FindFirstChild("Humanoid")
 			if Humanoid then
-				local player: Player = PlayerService:GetPlayerFromCharacter(Humanoid.Parent)
-				if player.Team ~= game.Teams.Survivor then
+				local playerTouched: Player = PlayerService:GetPlayerFromCharacter(Humanoid.Parent)
+				if playerTouched.Team ~= game.Teams.Survivor then
 					hitregister = false
 					return
 				end
 			end
-
 			local KillHitBox = Killbox:Clone()
 			RocketModel:Destroy()
 			Indicator:Destroy()
@@ -168,13 +170,12 @@ function NormalAbilitys.Rocket(playerclassproperties)
 			KillConnection = KillHitBox.Touched:Connect(function(body)
 				local humanoid = body.Parent:FindFirstChild("Humanoid")
 				if humanoid then
-					local player = PlayerService:GetPlayerFromCharacter(body.Parent)
-					if player.Team == game.Teams.Survivor then
+					local playerHit = PlayerService:GetPlayerFromCharacter(body.Parent)
+					if playerHit.Team == game.Teams.Survivor then
 						humanoid.Health = 0
 					end
 				end
 			end)
-
 			task.delay(0.3, function()
 				KillConnection:Disconnect()
 				KillHitBox:Destroy()
@@ -195,20 +196,26 @@ function NormalAbilitys.FieldOfView(playerclassproperties)
 
 	local Character = player.Character
 	local Hitbox = game.ReplicatedStorage.Models.FieldOfView.HitBox:Clone()
-	Hitbox:PivotTo(Character:FindFirstChild("HumanoidRootPart").CFrame)
-	task.wait(0.1)
-	local HittetPlayers = {}
-	for i, Part in Hitbox:GetTouchingParts() do
+	Hitbox.Position = Character:FindFirstChild("HumanoidRootPart").Position
+	Hitbox.Parent = game.Workspace
+	local HittedPlayers = {}
+	local RemoteEvent: RemoteEvent = ReplicatedStorage:FindFirstChild("Event"):FindFirstChild("StatusApplier")
+	local SoundEvent: UnreliableRemoteEvent = ReplicatedStorage.Event.SoundPlayer.PlaySound
+	SoundEvent:FireAllClients("rbxassetid://8417230527", Character:FindFirstChild("HumanoidRootPart").Position)
+	for _, Part in workspace:GetPartsInPart(Hitbox) do
+		print(Part)
 		local Humanoid = Part.Parent:FindFirstChild("Humanoid")
 		if Humanoid then
 			local EnemyPlayer: Player = PlayerService:GetPlayerFromCharacter(Part.Parent)
 			print(EnemyPlayer.UserId)
-			if HittetPlayers[EnemyPlayer.UserId] or EnemyPlayer.Team ~= game.Teams.Survivor then
+			if EnemyPlayer.Team ~= game.Teams.Survivor or HittedPlayers[EnemyPlayer] then
 				continue
 			end
-			HittetPlayers[EnemyPlayer.UserId] = true
+			RemoteEvent:FireClient(EnemyPlayer, "FieldOfView", 10)
+			HittedPlayers[EnemyPlayer] = true
 		end
 	end
+	Hitbox:Destroy()
 end
 
 return NormalAbilitys

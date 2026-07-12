@@ -7,7 +7,7 @@ local Nextbotplayer = require(ServerStorage.Rojo_Scripts.Nextbots.Nextbotplayer)
 gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
 	for _, player in Nextbots do
-		player.Character.othermovment.Enabled = true
+		player.Character.Rojo_Scripts.othermovment.Enabled = true
 		player.Character:FindFirstChild("Humanoid").Health = 0
 	end
 	repeat
@@ -63,9 +63,9 @@ function gameprocess.Startgame()
 		table.insert(Nextbots, player)
 		table.remove(pickableplayers, mathrandom)
 		local Character = player.Character
-		Character:FindFirstChild("othermovment").Enabled = false
+		Character.Rojo_Scripts:FindFirstChild("othermovment").Enabled = false
 		game.ReplicatedStorage.localnextbotevents.ResetCamerOffset:FireClient(player)
-		Nextbotplayer.addplayer(player, "CoolGuy") --test code because i still dont have a save system
+		Nextbotplayer.addplayer(player, "Royal") --test code because i still dont have a save system
 		game.ReplicatedStorage.playeranimation.disableanimation:FireClient(player)
 	end
 	game.ReplicatedStorage.Start:Fire()
