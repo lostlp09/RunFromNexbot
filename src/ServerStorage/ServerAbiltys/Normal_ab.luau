@@ -2,7 +2,10 @@ local NormalAbilitys = {}
 NormalAbilitys.__index = NormalAbilitys
 local Runservice = game:GetService("RunService")
 local PlayerService = game:GetService("Players")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
+local Teams = game:GetService("Teams")
 function NormalAbilitys.new(Ability: string, classproperties)
 	if NormalAbilitys[Ability] == nil then
 		return false
@@ -216,6 +219,24 @@ function NormalAbilitys.FieldOfView(playerclassproperties)
 		end
 	end
 	Hitbox:Destroy()
+end
+function NormalAbilitys.CallIndicator()
+	local function CreateHighlight(Character)
+		local HiglightInstance: Highlight = Instance.new("Highlight")
+		HiglightInstance.FillTransparency = 0.6
+		HiglightInstance.OutlineColor = Color3.fromRGB(255, 0, 0)
+		HiglightInstance.FillColor = Color3.fromRGB(255, 0, 0)
+		HiglightInstance.Parent = Character
+		game.Debris:AddItem(HiglightInstance, 5)
+	end
+
+	for _, EnemyPlayer: Player in Players:getChildren() do
+		if EnemyPlayer.Team ~= Teams.Survivor and EnemyPlayer.Character then
+			continue
+		end
+		local Character = EnemyPlayer.Character
+		CreateHighlight(Character)
+	end
 end
 
 return NormalAbilitys

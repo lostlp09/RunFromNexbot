@@ -21,9 +21,6 @@ game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(p
 	print("Wirst du ausgefphrt", Itemtype)
 
 	if Itemtype == "Character" then
-		print(NextBotPrices.Royal)
-		print(PlayerData[player.UserId]["NextbotOwned"][Key])
-
 		if
 			PlayerData[player.UserId]["Currency"] - NextBotPrices[Key] >= 0
 			and PlayerData[player.UserId]["NextbotOwned"][Key] == false
@@ -40,12 +37,6 @@ game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(p
 			return false
 		end
 	elseif Itemtype == "Emote" then
-		print(
-			PlayerData[player.UserId]["Currency"],
-			EmotePrices[Key],
-			PlayerData[player.UserId]["EmoteOwned"][Key],
-			Key
-		)
 		if
 			PlayerData[player.UserId]["Currency"] - EmotePrices[Key] >= 0
 			and PlayerData[player.UserId]["EmoteOwned"][Key] == false
