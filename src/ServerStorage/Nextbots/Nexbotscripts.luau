@@ -43,7 +43,7 @@ function Nextbot.new(player, Name, Texture, walkspeed: number, HasAbilitys: bool
 		if self[Ability] == nil then
 			return
 		end
-		for i, value in { self.Ability1, self.Ability2, self.Ability3 } do
+		for _, value in { self.Ability1, self.Ability2, self.Ability3 } do
 			if value ~= false and value ~= self[Ability] then
 				if value.running then
 					return

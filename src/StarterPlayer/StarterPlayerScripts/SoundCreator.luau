@@ -43,17 +43,17 @@ function SoundCreator.new2DSoundEffect(Id, speed)
 	SoundInstance.Ended:Wait()
 	SoundInstance:Destroy()
 end
-local States = {
+SoundCreator.States = {
+
 	["rbxassetid://8417230527"] = function(Position) --Heheha
 		SoundCreator.new("rbxassetid://8417230527", Position, 0.75)
 	end,
-	["rbxassetid://79620239797415"] = function()
-		SoundCreator.new2DSoundEffect("rbxassetid://79620239797415", 0.8)
+	["rbxassetid://99933358254659"] = function() --JP Calling
+		SoundCreator.new2DSoundEffect("rbxassetid://99933358254659", 1)
 	end,
 }
 ReplicatedStorage.Event:FindFirstChild("SoundPlayer").PlaySound.OnClientEvent:Connect(function(Id, PositionOrUserId)
-	task.spawn(States[Id], PositionOrUserId)
+	task.spawn(SoundCreator.States[Id], PositionOrUserId)
 end)
 
-task.spawn(States["rbxassetid://79620239797415"])
 return SoundCreator
