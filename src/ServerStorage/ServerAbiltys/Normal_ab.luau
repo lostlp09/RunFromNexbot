@@ -4,7 +4,6 @@ local Runservice = game:GetService("RunService")
 local PlayerService = game:GetService("Players")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerStorage = game:GetService("ServerStorage")
 local Teams = game:GetService("Teams")
 function NormalAbilitys.new(Ability: string, classproperties)
 	if NormalAbilitys[Ability] == nil then
@@ -16,11 +15,13 @@ function NormalAbilitys.new(Ability: string, classproperties)
 	self.running = false
 
 	self.config = NormalAbilitys.Data[Ability]
+	print(Ability, self.config, NormalAbilitys.Data)
 	self.cooldown = self.config.cooldown
 	self.Ability = NormalAbilitys[Ability]
 	function self.RunAbility()
 		local currenttime = os.clock()
 		if currenttime - self.last_used >= self.cooldown then
+			print("runTest")
 			self.last_used = currenttime
 			task.spawn(function()
 				self.Ability(classproperties)
@@ -35,6 +36,7 @@ NormalAbilitys.Data = {
 	Beam = { cooldown = 3, Name = "Beam" },
 	Rocket = { cooldown = 10, Name = "Rocket" },
 	FieldOfView = { cooldown = 20, Name = "FieldOfView" },
+	PorkCall = { cooldown = 20, Name = "PorkCall" },
 }
 
 NormalAbilitys.Beam = function(playerclassproperties)
@@ -220,7 +222,7 @@ function NormalAbilitys.FieldOfView(playerclassproperties)
 	end
 	Hitbox:Destroy()
 end
-function NormalAbilitys.CallIndicator()
+function NormalAbilitys.PorkCall()
 	local function CreateHighlight(Character)
 		local HiglightInstance: Highlight = Instance.new("Highlight")
 		HiglightInstance.FillTransparency = 0.6
@@ -234,6 +236,7 @@ function NormalAbilitys.CallIndicator()
 		if EnemyPlayer.Team ~= Teams.Survivor and EnemyPlayer.Character then
 			continue
 		end
+		ReplicatedStorage.Event.ConsequenceApllier:FireClient(EnemyPlayer, "PorkCall")
 		local Character = EnemyPlayer.Character
 		CreateHighlight(Character)
 	end

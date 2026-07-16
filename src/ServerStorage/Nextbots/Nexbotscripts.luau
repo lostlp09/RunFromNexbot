@@ -7,17 +7,19 @@ function Nextbot.new(player, Name, Texture, walkspeed: number, HasAbilitys: bool
 	local self = {}
 	self.Name = Name
 	self.player = player
-	self.Name = "Coolguy"
+	self.Name = Name
 	self.speed = walkspeed
 	self.Texture = Texture
 	self.HasAbilitys = HasAbilitys
-	self.Ability1 = NormalAbilitys.new(Ability1, self) or ReuseAbility.new(Ability1, self) or false
-	self.Ability2 = NormalAbilitys.new(Ability2, self) or ReuseAbility.new(Ability2, self) or false
-	self.Ability3 = NormalAbilitys.new(Ability3, self) or ReuseAbility.new(Ability3, self) or false
-	if self.Ability2 == false then
+	print(Ability1)
+	self.Ability1 = NormalAbilitys.new(Ability1, self) or ReuseAbility.new(Ability1, self)
+	self.Ability2 = NormalAbilitys.new(Ability2, self) or ReuseAbility.new(Ability2, self)
+	self.Ability3 = NormalAbilitys.new(Ability3, self) or ReuseAbility.new(Ability3, self)
+	print(self.Ability1)
+	if not self.Ability2 then
 		print(self.Ability1.config)
 		game.ReplicatedStorage.localnextbotevents.giveproperties:FireClient(player, table.clone(self.Ability1.config))
-	elseif self.Ability3 == false then
+	elseif not self.Ability3 then
 		game.ReplicatedStorage.localnextbotevents.giveproperties:FireClient(
 			player,
 			table.clone(self.Ability1.config),
@@ -43,14 +45,15 @@ function Nextbot.new(player, Name, Texture, walkspeed: number, HasAbilitys: bool
 		if self[Ability] == nil then
 			return
 		end
-		for _, value in { self.Ability1, self.Ability2, self.Ability3 } do
+		for i, value in { self.Ability1, self.Ability2, self.Ability3 } do
 			if value ~= false and value ~= self[Ability] then
 				if value.running then
+					print("Why", i)
 					return
 				end
 			end
 		end
-
+		print("RunAbility")
 		self[Ability].RunAbility()
 	end)
 

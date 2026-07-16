@@ -12,34 +12,35 @@ local Status = {
 	Blinded = { Apllied = false, duration = 0, OldTime = 0 },
 	FieldOfView = { Apllied = false, duration = 0, OldTime = 0 },
 }
-local Consequence = {}
+AbilitySurvconsequence.Consequence = {
 
-function Consequence.PorkCall()
-	local PorkUi = ReplicatedStorage.Ui.AbilityConsequence:FindFirstChild("JpCall"):Clone()
-	PorkUi.Parent = player:FindFirstChild("PlayerGui"):FindFirstChild("MainButtons")
-	local Image: ImageLabel = PorkUi.Image
-	task.spawn(SoundCreator.States["rbxassetid://99933358254659"])
-	task.spawn(function()
-		local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 7, true)
-		local SpecialTween = TweenInfo.new(0.1, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false)
-		local propertyTable = {
-			Rotation = 20,
-		}
-		for _ = 1, 3, 1 do
-			print("Does Code Even")
-			local Tween = TweenService:Create(Image, SpecialTween, { Rotation = -20 })
-			Tween:Play()
-			Tween.Completed:Wait()
-			Tween = TweenService:Create(Image, tweenInfo, propertyTable)
-			Tween:Play()
-			Tween.Completed:Wait()
-			Tween = TweenService:Create(Image, SpecialTween, { Rotation = 0 })
-			Tween:Play()
-			task.wait(1.2)
-		end
-		PorkUi:Destroy()
-	end)
-end
+	["PorkCall"] = function()
+		local PorkUi = ReplicatedStorage.Ui.AbilityConsequence:FindFirstChild("JpCall"):Clone()
+		PorkUi.Parent = player:FindFirstChild("PlayerGui"):FindFirstChild("MainButtons")
+		local Image: ImageLabel = PorkUi.Image
+		task.spawn(SoundCreator.States["rbxassetid://99933358254659"])
+		task.spawn(function()
+			local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 6, true)
+			local SpecialTween = TweenInfo.new(0.1, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false)
+			local propertyTable = {
+				Rotation = 20,
+			}
+			for _ = 1, 3, 1 do
+				print("Does Code Even")
+				local Tween = TweenService:Create(Image, SpecialTween, { Rotation = -20 })
+				Tween:Play()
+				Tween.Completed:Wait()
+				Tween = TweenService:Create(Image, tweenInfo, propertyTable)
+				Tween:Play()
+				Tween.Completed:Wait()
+				Tween = TweenService:Create(Image, SpecialTween, { Rotation = 0 })
+				Tween:Play()
+				task.wait(1.2)
+			end
+			PorkUi:Destroy()
+		end)
+	end,
+}
 
 local StatusApplied = {
 	FieldOfView = function(duration)
@@ -110,5 +111,4 @@ end
 function AbilitySurvconsequence.ApplyStatus(key, duration)
 	StatusApplied[key](duration)
 end
-task.delay(3, Consequence.PorkCall)
 return AbilitySurvconsequence

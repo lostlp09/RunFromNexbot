@@ -54,5 +54,7 @@ end
 function localabiltys.FieldOfView()
 	print("Cool")
 end
-
+function localabiltys.PorkCall()
+	print("Cool")
+end
 return localabiltys

@@ -6,10 +6,6 @@ local Survival = {}
 local Nextbotplayer = require(ServerStorage.Rojo_Scripts.Nextbots.Nextbotplayer)
 gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
-	for _, player in Nextbots do
-		player.Character.Rojo_Scripts.othermovment.Enabled = true
-		player.Character:FindFirstChild("Humanoid").Health = 0
-	end
 	repeat
 		task.wait(1)
 	until #gameprocess.players > 1
@@ -30,6 +26,11 @@ function gameprocess.gameend()
 		player.Team = game.Teams.lobby
 	end
 	task.wait(3)
+	for _, player in Nextbots do
+		player.Character.Rojo_Scripts.othermovment.Enabled = true
+		player.Character:FindFirstChild("Humanoid").Health = 0
+	end
+	Nextbotplayer.RemoveAll()
 	gameprocess.wait_for_game()
 end
 
@@ -65,7 +66,7 @@ function gameprocess.Startgame()
 		local Character = player.Character
 		Character.Rojo_Scripts:FindFirstChild("othermovment").Enabled = false
 		game.ReplicatedStorage.localnextbotevents.ResetCamerOffset:FireClient(player)
-		Nextbotplayer.addplayer(player, "Royal") --test code because i still dont have a save system
+		Nextbotplayer.addplayer(player, "Pork") --test code because i still dont have a save system
 		game.ReplicatedStorage.playeranimation.disableanimation:FireClient(player)
 	end
 	game.ReplicatedStorage.Start:Fire()

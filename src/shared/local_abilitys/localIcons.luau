@@ -46,5 +46,11 @@ function abilityicon.FieldOfView(ui)
 	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
 	AbilityText.Text = "I can Blind Enemys im tuff"
 end
+function abilityicon.PorkCall(ui)
+	local imageobject: ImageLabel = ui.Icon
+	imageobject.Image = "rbxassetid://11375297133"
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
+	AbilityText.Text = "Call"
+end
 
 return abilityicon
