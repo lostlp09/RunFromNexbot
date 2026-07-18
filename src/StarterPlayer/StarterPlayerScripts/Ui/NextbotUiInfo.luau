@@ -21,6 +21,17 @@ local NextbotUiInfo = {
 		AbilityIcons = { "Rocket", "nothing", "nothing" },
 		CoinPrice = 400,
 	},
+	Sanic = {
+		Icon = "120845391993556",
+		Rarity = "Rare",
+		Description = "He wants to call everyone",
+		HP = 200,
+		Walkspeed = 128,
+
+		Ability = { Ability1 = "Rocket", Ability2 = "nothing", Ability3 = "nothing" },
+		AbilityIcons = { "Rocket", "nothing", "nothing" },
+		CoinPrice = 400,
+	},
 }
 
 return NextbotUiInfo

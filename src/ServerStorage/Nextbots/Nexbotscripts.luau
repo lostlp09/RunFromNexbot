@@ -8,7 +8,7 @@ function Nextbot.new(player, Name, Texture, walkspeed: number, HasAbilitys: bool
 	self.Name = Name
 	self.player = player
 	self.Name = Name
-	self.speed = walkspeed
+	self.WalkSpeed = walkspeed
 	self.Texture = Texture
 	self.HasAbilitys = HasAbilitys
 	print(Ability1)
@@ -34,7 +34,7 @@ function Nextbot.new(player, Name, Texture, walkspeed: number, HasAbilitys: bool
 		)
 	end
 	self.humanoid = self.player.Character:FindFirstChild("Humanoid")
-	self.humanoid.WalkSpeed = self.speed
+	self.humanoid.WalkSpeed = self.WalkSpeed
 
 	self.attackrequest = game.ReplicatedStorage.Nextbot.Ability.OnServerEvent:Connect(function(player_sended, Ability)
 		print(player_sended)
@@ -56,7 +56,7 @@ function Nextbot.new(player, Name, Texture, walkspeed: number, HasAbilitys: bool
 		print("RunAbility")
 		self[Ability].RunAbility()
 	end)
-
+	self.gamestartet = nil
 	self.gamestartet = game.ReplicatedStorage.Start.Event:Connect(function()
 		print(self.player)
 		local root = self.player.Character:FindFirstChild("HumanoidRootPart")
@@ -77,6 +77,7 @@ function Nextbot.new(player, Name, Texture, walkspeed: number, HasAbilitys: bool
 		Beam.FaceCamera = true
 		Beam.Parent = root
 		Beam.Transparency = NumberSequence.new(0, 0)
+		self.gamestartet:Disconnect()
 	end)
 
 	print(self)

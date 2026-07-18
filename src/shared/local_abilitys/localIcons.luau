@@ -52,5 +52,10 @@ function abilityicon.PorkCall(ui)
 	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
 	AbilityText.Text = "Call"
 end
-
+function abilityicon.SpeedBoost(ui)
+	local imageobject: ImageLabel = ui.Icon
+	imageobject.Image = "rbxassetid://11375297133"
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
+	AbilityText.Text = "Call"
+end
 return abilityicon

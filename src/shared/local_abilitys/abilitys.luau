@@ -57,4 +57,7 @@ end
 function localabiltys.PorkCall()
 	print("Cool")
 end
+function localabiltys.SpeedBoost()
+	print("Cool")
+end
 return localabiltys

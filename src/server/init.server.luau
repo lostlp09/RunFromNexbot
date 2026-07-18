@@ -1,5 +1,5 @@
 function activatescripts(root)
-	for i, value: Instance in root:GetChildren() do
+	for _, value: Instance in root:GetChildren() do
 		if value:IsA("Folder") then
 			activatescripts(value)
 		elseif value:IsA("ModuleScript") then
@@ -7,8 +7,6 @@ function activatescripts(root)
 			if type(module.activate) == "function" then
 				module.activate()
 			end
-		end
-		if root.Name == "ServerStorage" then
 		end
 	end
 end

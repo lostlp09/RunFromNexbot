@@ -37,6 +37,7 @@ NormalAbilitys.Data = {
 	Rocket = { cooldown = 10, Name = "Rocket" },
 	FieldOfView = { cooldown = 20, Name = "FieldOfView" },
 	PorkCall = { cooldown = 20, Name = "PorkCall" },
+	SpeedBoost = { cooldown = 20, Name = "SpeedBoost" },
 }
 
 NormalAbilitys.Beam = function(playerclassproperties)
@@ -171,20 +172,20 @@ function NormalAbilitys.Rocket(playerclassproperties)
 			Indicator:Destroy()
 			KillHitBox.Position = Rocket.Position
 			KillHitBox.Parent = game.Workspace
-			local KillConnection
-			KillConnection = KillHitBox.Touched:Connect(function(body)
-				local humanoid = body.Parent:FindFirstChild("Humanoid")
-				if humanoid then
-					local playerHit = PlayerService:GetPlayerFromCharacter(body.Parent)
-					if playerHit.Team == game.Teams.Survivor then
-						humanoid.Health = 0
+			KillHitBox.Anchored = true
+			local Hittplayers = {}
+			for _, Enemy in workspace:GetPartsInPart(KillHitBox) do
+				local EnemyHumanoid = Enemy.Parent:FindFirstChild("Humanoid")
+				if EnemyHumanoid then
+					local EnemyPlayer: Player = PlayerService:GetPlayerFromCharacter(Humanoid.Parent)
+					if Hittplayers[EnemyPlayer.UserId] then
+						continue
 					end
+					Hittplayers[EnemyPlayer.UserId] = true
+					Humanoid.Health = 0
 				end
-			end)
-			task.delay(0.3, function()
-				KillConnection:Disconnect()
-				KillHitBox:Destroy()
-			end)
+			end
+			KillHitBox:Destroy()
 		end)
 		task.delay(3, function()
 			if Connection then
@@ -192,7 +193,6 @@ function NormalAbilitys.Rocket(playerclassproperties)
 			end
 		end)
 		game.Debris:AddItem(Indicator, 4)
-		task.wait(0.1)
 	end
 end
 
@@ -239,6 +239,20 @@ function NormalAbilitys.PorkCall()
 		ReplicatedStorage.Event.ConsequenceApllier:FireClient(EnemyPlayer, "PorkCall")
 		local Character = EnemyPlayer.Character
 		CreateHighlight(Character)
+	end
+end
+
+function NormalAbilitys.SpeedBoost(playerclassproperties)
+	local player: Player = playerclassproperties.player
+
+	print(playerclassproperties)
+	local Character = player.Character
+	if Character then
+		local Humanoid: Humanoid = Character:FindFirstChild("Humanoid")
+		Humanoid.WalkSpeed = 150
+		task.delay(4, function()
+			Humanoid.WalkSpeed = playerclassproperties.WalkSpeed
+		end)
 	end
 end
 

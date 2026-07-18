@@ -4,6 +4,7 @@ gameprocess.players = {} --Players here because i cant find this variable all  t
 local Nextbots = {}
 local Survival = {}
 local Nextbotplayer = require(ServerStorage.Rojo_Scripts.Nextbots.Nextbotplayer)
+local KillTracker = require(script.Parent.KillTracker)
 gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
 	repeat
@@ -20,6 +21,7 @@ function gameprocess.activate()
 	end)
 end
 function gameprocess.gameend()
+	KillTracker.StopKilling()
 	gameprocess.gamerunning = false
 	print(gameprocess.players)
 	for _, player: Player in game.Players:GetChildren() do
@@ -30,6 +32,8 @@ function gameprocess.gameend()
 		player.Character.Rojo_Scripts.othermovment.Enabled = true
 		player.Character:FindFirstChild("Humanoid").Health = 0
 	end
+	table.clear(Nextbots)
+	table.clear(Survival)
 	Nextbotplayer.RemoveAll()
 	gameprocess.wait_for_game()
 end
@@ -50,6 +54,7 @@ end
 function gameprocess.Startgame()
 	gameprocess.gamerunning = true
 	local pickableplayers = table.clone(gameprocess.players)
+
 	print(pickableplayers)
 	for i = 1, 1, 1 do --1 , math.floor(#pickableplayers/2),  do
 		print(i)
@@ -66,9 +71,13 @@ function gameprocess.Startgame()
 		local Character = player.Character
 		Character.Rojo_Scripts:FindFirstChild("othermovment").Enabled = false
 		game.ReplicatedStorage.localnextbotevents.ResetCamerOffset:FireClient(player)
-		Nextbotplayer.addplayer(player, "Pork") --test code because i still dont have a save system
+		Nextbotplayer.addplayer(player, "Sanic") --test code because i still dont have a save system
 		game.ReplicatedStorage.playeranimation.disableanimation:FireClient(player)
 	end
+	task.spawn(function()
+		KillTracker.StartKilling(Nextbots)
+	end)
+
 	game.ReplicatedStorage.Start:Fire()
 	print(pickableplayers)
 	for _, player: Player in pickableplayers do
