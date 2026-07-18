@@ -17,18 +17,16 @@ function Playeradded.activate()
 				--humanoid:ApplyDescriptionAsync(PlayerService:GetHumanoidDescriptionFromUserIdAsync(player.UserId))
 				--UiUpdatedArray[player.UserId] = true
 			end
-			print("hi")
-			if not player:HasAppearanceLoaded() then
-				player.CharacterAppearanceLoaded:Wait()
-			end
-			for i, object in character:GetDescendants() do
+			for _, object in character:GetDescendants() do
 				if object:IsA("BasePart") then
+					print("load")
 					object.CollisionGroup = "player"
 					print(object.Name, object.CollisionGroup)
 				end
 			end
-			player.Character.ChildAdded:Connect(function(object)
+			player.Character.DescendantAdded:Connect(function(object)
 				if object:IsA("BasePart") then
+					print("Cool")
 					object.CollisionGroup = "player"
 				end
 			end)

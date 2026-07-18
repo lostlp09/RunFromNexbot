@@ -1,6 +1,6 @@
 local KillTracker = {}
 local Track = false
-local BoxSize = Vector3.new(4, 6, 4)
+local BoxSize = Vector3.new(10, 6, 10)
 function KillTracker.StartKilling(Nextbots)
 	local Overlaps: OverlapParams = OverlapParams.new()
 	Track = true
@@ -23,7 +23,7 @@ function KillTracker.StartKilling(Nextbots)
 				end
 			end
 		end
-		task.wait(0.15)
+		task.wait(0.05)
 	end
 	table.clear(Characters)
 	print("Ended")
