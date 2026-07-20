@@ -11,7 +11,6 @@ function KillTracker.StartKilling(Nextbots)
 	Overlaps.FilterDescendantsInstances = Characters
 	Overlaps.FilterType = Enum.RaycastFilterType.Exclude
 	while Track do
-		print(Characters)
 		for _, character in Characters do
 			local root = character:FindFirstChild("HumanoidRootPart")
 			if root then
@@ -26,7 +25,6 @@ function KillTracker.StartKilling(Nextbots)
 		task.wait(0.05)
 	end
 	table.clear(Characters)
-	print("Ended")
 end
 function KillTracker.StopKilling()
 	Track = false

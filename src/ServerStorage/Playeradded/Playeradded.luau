@@ -1,7 +1,4 @@
 local Playeradded = {}
-local PlayerService = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Workspace = game:GetService("Workspace")
 local movmentstatscript = require(script.Parent.Parent.Movmentstate.Movmentscript)
 local gameProcessScript = require(script.Parent.Parent.gamestartingscripts.gameprocess)
 local DataSave = require(script.Parent.Save)

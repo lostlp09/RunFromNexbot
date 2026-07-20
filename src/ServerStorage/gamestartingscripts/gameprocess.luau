@@ -5,6 +5,8 @@ local Nextbots = {}
 local Survival = {}
 local Nextbotplayer = require(ServerStorage.Rojo_Scripts.Nextbots.Nextbotplayer)
 local KillTracker = require(script.Parent.KillTracker)
+local SurvivorNextbotAlive = require(script.Parent.SurvivorNextbotAlive)
+
 gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
 	repeat
@@ -22,6 +24,7 @@ function gameprocess.activate()
 end
 function gameprocess.gameend()
 	KillTracker.StopKilling()
+
 	gameprocess.gamerunning = false
 	print(gameprocess.players)
 	for _, player: Player in game.Players:GetChildren() do
@@ -32,6 +35,7 @@ function gameprocess.gameend()
 		player.Character.Rojo_Scripts.othermovment.Enabled = true
 		player.Character:FindFirstChild("Humanoid").Health = 0
 	end
+
 	table.clear(Nextbots)
 	table.clear(Survival)
 	Nextbotplayer.RemoveAll()
@@ -74,6 +78,7 @@ function gameprocess.Startgame()
 		Nextbotplayer.addplayer(player, "Sanic") --test code because i still dont have a save system
 		game.ReplicatedStorage.playeranimation.disableanimation:FireClient(player)
 	end
+
 	task.spawn(function()
 		KillTracker.StartKilling(Nextbots)
 	end)
@@ -84,6 +89,8 @@ function gameprocess.Startgame()
 		player.Team = game.Teams.Survivor
 	end
 	Survival = table.clone(pickableplayers)
+	SurvivorNextbotAlive.SetNextbot(Nextbots)
+	SurvivorNextbotAlive.SetSurvivor(Survival)
 end
 
 function gameprocess.addplayer(player: Player)

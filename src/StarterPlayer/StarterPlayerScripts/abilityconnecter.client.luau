@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Teams = game:GetService("Teams")
 local uip = game:GetService("UserInputService")
 local Camera = game.Workspace:WaitForChild("Camera")
 local Ability1 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1 }
@@ -26,8 +27,7 @@ local function Attack1(currentTime)
 	end
 	print(currentTime, Ability1.lastused, cooldown)
 	if currentTime - Ability1.lastused >= cooldown then
-		game.ReplicatedStorage.Nextbot.Ability:FireServer("Ability1")
-		print("attack")
+		ReplicatedStorage.Nextbot.Ability:FireServer("Ability1")
 	end
 end
 local function Attack2(currentTime)
@@ -55,6 +55,9 @@ local function Attack3(currentTime)
 end
 local Attacks = { Attack1, Attack2, Attack3 }
 uip.InputBegan:Connect(function(input)
+	if player.Team ~= Teams.Nextbot then
+		return
+	end
 	if Ability1.Name == "" then
 		return
 	end

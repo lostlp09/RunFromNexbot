@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
 local TweenService = game:GetService("TweenService")
-local SoundCreator = require(StarterPlayer.StarterPlayerScripts.Rojo_Scripts.SoundCreator)
+local SoundCreator = require(ReplicatedStorage.Shared.SoundCreator)
 local player = Players.LocalPlayer
 
 local Status = {

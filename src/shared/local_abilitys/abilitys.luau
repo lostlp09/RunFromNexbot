@@ -1,3 +1,5 @@
+local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
 local localabiltys = {}
 function localabiltys.Beam(player: Player)
 	local Character = player.Character
@@ -58,6 +60,18 @@ function localabiltys.PorkCall()
 	print("Cool")
 end
 function localabiltys.SpeedBoost()
-	print("Cool")
+	local Camera: Camera = Workspace.Camera
+	local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out, 0, false, 0)
+	local propertyTable = {
+		FieldOfView = 100,
+	}
+	local tween = TweenService:Create(Camera, tweenInfo, propertyTable)
+	tween:Play()
+	task.wait(10)
+	propertyTable = {
+		FieldOfView = 70,
+	}
+	tween = TweenService:Create(Camera, tweenInfo, propertyTable)
+	tween:Play()
 end
 return localabiltys

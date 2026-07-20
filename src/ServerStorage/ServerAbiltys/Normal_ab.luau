@@ -4,7 +4,12 @@ local Runservice = game:GetService("RunService")
 local PlayerService = game:GetService("Players")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local Teams = game:GetService("Teams")
+local SurvivorNextbotAlive = require(ServerStorage.Rojo_Scripts.gamestartingscripts.SurvivorNextbotAlive)
+local Survivors = {}
+local Nextbots = {}
+
 function NormalAbilitys.new(Ability: string, classproperties)
 	if NormalAbilitys[Ability] == nil then
 		return false
@@ -21,12 +26,12 @@ function NormalAbilitys.new(Ability: string, classproperties)
 	function self.RunAbility()
 		local currenttime = os.clock()
 		if currenttime - self.last_used >= self.cooldown then
+			game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, self.config.Name)
 			print("runTest")
 			self.last_used = currenttime
 			task.spawn(function()
 				self.Ability(classproperties)
 			end)
-			game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, self.config.Name)
 		end
 	end
 	return self
@@ -39,43 +44,6 @@ NormalAbilitys.Data = {
 	PorkCall = { cooldown = 20, Name = "PorkCall" },
 	SpeedBoost = { cooldown = 20, Name = "SpeedBoost" },
 }
-
-NormalAbilitys.Beam = function(playerclassproperties)
-	local Size = 50
-	local player = playerclassproperties.player
-	local getCameralocation: RemoteFunction = game.ReplicatedStorage.Nextbot.Abilitysrequestforclient.getCamerarot
-	local cameralook = getCameralocation:InvokeClient(player)
-
-	local playerservice = game:GetService("Players")
-	local character = player.Character
-	local root = character:FindFirstChild("HumanoidRootPart")
-	local part = Instance.new("Part")
-
-	task.wait(0.5)
-	part.Anchored = true
-	part.Parent = game.Workspace
-	part.CFrame = CFrame.lookAt(root.Position, root.Position + cameralook) * CFrame.new(0, 2, Size / 2 * -1 - 20)
-	part.CanCollide = false
-	part.CanTouch = true
-	part.Size = Vector3.new(10, 10, 50)
-
-	local killconnection = part.Touched:Connect(function(hit)
-		local humanoid: Humanoid = hit.Parent:FindFirstChild("Humanoid")
-		if humanoid then
-			if playerservice:GetPlayerFromCharacter(hit.Parent).Team == game.Teams.Survivor then
-				humanoid.Health = 0
-			end
-		end
-	end)
-	task.spawn(function()
-		repeat
-			part.Transparency += 0.02
-			task.wait(0.01)
-		until part.Transparency >= 1
-
-		killconnection:Disconnect()
-	end)
-end
 
 function NormalAbilitys.Rocket(playerclassproperties)
 	local player: Player = playerclassproperties.player
@@ -250,9 +218,50 @@ function NormalAbilitys.SpeedBoost(playerclassproperties)
 	if Character then
 		local Humanoid: Humanoid = Character:FindFirstChild("Humanoid")
 		Humanoid.WalkSpeed = 150
-		task.delay(4, function()
+		task.delay(10, function()
 			Humanoid.WalkSpeed = playerclassproperties.WalkSpeed
 		end)
+	end
+	game.ReplicatedStorage.Event.SoundPlayer.ChangeFollowingMusic:FireAllClients(
+		player.UserId,
+		"rbxassetid://139377079452785",
+		10
+	)
+end
+function NormalAbilitys.Thunder(playerclassproperties)
+	local Indicator = ReplicatedStorage.Models.Indicator
+	local BoxSize = task.wait(1)
+	for _, player: Player in SurvivorNextbotAlive.GetSurvivor() do
+		local Character = player.Character
+		local Indi
+		if not Character then
+			continue
+		end
+		local root: Part = Character:FindFirstChild("HumanoidRootPart")
+		local Raycastprop = RaycastParams.new()
+		Raycastprop.CollisionGroup = "player"
+		local RayCast = game.Workspace:Raycast(
+			Vector3.new(root.Position.X, 200, root.Position.Z),
+			Vector3.new(0, -500, 0),
+			Raycastprop
+		)
+		game.Debris:AddItem(Indicator, 1.2)
+		task.wait(1)
+		local hittedplayers = {}
+		for _, part in workspace:GetPartBoundsInBox(CFrame.new(30, 0.001, 30)) do
+			local Humanoid: Humanoid = part.Parent:FindFirstChild("HumanoidROotPart")
+			if Humanoid then
+				local character = Humanoid.Parent
+				local Enemy = PlayerService:GetPlayerFromCharacter(character)
+				if table.find(hittedplayers, Enemy) or Enemy.Team == Teams.Nextbots then
+					continue
+				end
+				table.insert(hittedplayers, Enemy)
+				Humanoid.Health = 0
+			end
+		end
+
+		Indicator:PivotTo(CFrame.lookAt(root.Position, RayCast.Normal))
 	end
 end
 

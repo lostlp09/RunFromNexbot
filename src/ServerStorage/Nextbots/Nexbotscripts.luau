@@ -3,8 +3,19 @@ local Nextbot = {}
 
 local NormalAbilitys = require(ServerStorage.Rojo_Scripts.ServerAbiltys.Normal_ab)
 local ReuseAbility = require(ServerStorage.Rojo_Scripts.ServerAbiltys.reuseab)
-function Nextbot.new(player, Name, Texture, walkspeed: number, HasAbilitys: boolean, Ability1, Ability2, Ability3)
+function Nextbot.new(
+	player,
+	Name,
+	Texture,
+	walkspeed: number,
+	HasAbilitys: boolean,
+	Audio,
+	Ability1,
+	Ability2,
+	Ability3
+)
 	local self = {}
+	self.Audio = Audio
 	self.Name = Name
 	self.player = player
 	self.Name = Name

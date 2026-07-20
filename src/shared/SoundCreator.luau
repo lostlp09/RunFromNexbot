@@ -13,7 +13,7 @@ function SoundCreator.new(Id, position: Vector3, speed)
 	Sound.Ended:Wait()
 	SoundBlock:Destroy()
 end
-function SoundCreator.newFollwingSound(Id, UserId, duration, speed)
+function SoundCreator.newFollwingSound(Id, UserId: number, duration: number, speed: number, returnable: boolean)
 	local SoundBlock = ReplicatedStorage.Event:FindFirstChild("SoundPlayer").FollowingSoundBlock:Clone()
 	SoundBlock.Anchored = false
 	local Player = Players:GetPlayerByUserId(UserId)
@@ -31,8 +31,13 @@ function SoundCreator.newFollwingSound(Id, UserId, duration, speed)
 	Sound.SoundId = Id
 	Sound:Play()
 	Sound.Looped = true
+
+	if returnable then
+		return SoundBlock
+	end
 	task.wait(duration)
 	SoundBlock:Destroy()
+	return nil
 end
 function SoundCreator.new2DSoundEffect(Id, speed)
 	local SoundInstance: Sound = Instance.new("Sound")
