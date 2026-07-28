@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterPlayer = game:GetService("StarterPlayer")
 local Teams = game:GetService("Teams")
 local uip = game:GetService("UserInputService")
 local Camera = game.Workspace:WaitForChild("Camera")
@@ -8,10 +9,11 @@ local Ability3 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1 
 local Abilitys = { Ability1, Ability2, Ability3 }
 local player = game.Players.LocalPlayer
 local Tweenservice = game:GetService("TweenService")
+local NextbotUiInfo = require(StarterPlayer.StarterPlayerScripts.Rojo_Scripts.Ui.NextbotUiInfo)
 local localAbilitys = require(ReplicatedStorage.Shared.local_abilitys.abilitys)
 local buttoncreator = require(ReplicatedStorage.Shared.local_abilitys.localIcons)
 local tweenproperties = {
-	["AspectRatio"] = 0.01,
+	["Size"] = UDim2.fromScale(1, 0),
 }
 game.ReplicatedStorage.Nextbot.Abilitysrequestforclient.getCamerarot.OnClientInvoke = function()
 	print("cool")
@@ -55,7 +57,7 @@ local function Attack3(currentTime)
 end
 local Attacks = { Attack1, Attack2, Attack3 }
 uip.InputBegan:Connect(function(input)
-	if player.Team ~= Teams.Nextbot then
+	if player.Team ~= Teams.Nextbots then
 		return
 	end
 	if Ability1.Name == "" then
@@ -75,8 +77,9 @@ end)
 game.ReplicatedStorage.localnextbotevents.giveproperties.OnClientEvent:Connect(
 	function(Ability1cf, Ability2cf, Ablity3cf)
 		for i, Ability in { Ability1cf, Ability2cf, Ablity3cf } do
-			local Ui: Frame = buttoncreator.createui(player, i, Ability.Name)
-			local button = Ui:FindFirstChild("Button")
+			print(Ability)
+			local Ui = buttoncreator.createui(player, i, Ability.Name, Ability.CharacterName)
+			local button = Ui.Canvas:FindFirstChild("ImageButton")
 			Abilitys[i].Button = Ui
 			button.MouseButton1Up:Connect(function()
 				local currentTime = os.clock()
@@ -104,21 +107,21 @@ game.ReplicatedStorage.runlocalabiltys.OnClientEvent:Connect(function(ability: s
 		if value.Name == ability then
 			value.lastused = os.clock()
 			local TweenInfoprogress
-			local scaleitem = value.Button.progressbar.UIAspectRatioConstraint
+			local ProgressBar: Frame = value.Button.Canvas.Progressbar
 
 			if type(other) == "boolean" then
 				print("super_es_klappt")
 				if other then
 					value.first_or_second = 1
-					value.Button.TimeUntilBack.Visible = false
+					value.Button.Cooldown.Visible = false
 				else
 					task.spawn(function()
-						value.Button.TimeUntilBack.Visible = true
+						value.Button.Cooldown.Visible = true
 						for i = value.TimeUntilAutoBack, 1, -1 do
-							value.Button.TimeUntilBack.Text = tostring(i)
+							value.Button.Cooldown.Text = tostring(i)
 							task.wait(1)
 						end
-						value.Button.TimeUntilBack.Visible = false
+						value.Button.Cooldown.Visible = false
 					end)
 					value.first_or_second = 2
 				end
@@ -136,10 +139,12 @@ game.ReplicatedStorage.runlocalabiltys.OnClientEvent:Connect(function(ability: s
 					TweenInfo.new(value.cooldown, Enum.EasingStyle.Linear, Enum.EasingDirection.In, 0, false, 0)
 			end
 			task.spawn(function()
-				scaleitem.AspectRatio = 5.742
-				scaleitem.Parent.Visible = true
-				local Tween = Tweenservice:Create(scaleitem, TweenInfoprogress, tweenproperties)
+				ProgressBar.Size = UDim2.fromScale(1, 1)
+				ProgressBar.Visible = true
+				local Tween = Tweenservice:Create(ProgressBar, TweenInfoprogress, tweenproperties)
 				Tween:Play()
+				Tween.Completed:Wait()
+				ProgressBar.Visible = false
 			end)
 
 			break

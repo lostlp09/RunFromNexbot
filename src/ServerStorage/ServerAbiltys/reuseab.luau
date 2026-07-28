@@ -1,7 +1,9 @@
 local Reuseableabilitys = {}
 Reuseableabilitys.__index = Reuseableabilitys
 
-Reuseableabilitys.Data = { ShapeShift = { cooldown = 15, Name = "ShapeShift", cooldown2 = 3, TimeUntilAutoBack = 10 } }
+Reuseableabilitys.Data = {
+	ShapeShift = { cooldown = 15, Name = "ShapeShift", cooldown2 = 3, TimeUntilAutoBack = 10, CharacterName = "Pork" },
+}
 
 function Reuseableabilitys.new(Ability: string, classproperties)
 	if Reuseableabilitys[Ability] == nil then

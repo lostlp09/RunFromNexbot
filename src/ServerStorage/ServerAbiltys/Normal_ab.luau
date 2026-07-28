@@ -38,11 +38,11 @@ function NormalAbilitys.new(Ability: string, classproperties)
 end
 
 NormalAbilitys.Data = {
-	Beam = { cooldown = 3, Name = "Beam" },
-	Rocket = { cooldown = 10, Name = "Rocket" },
-	FieldOfView = { cooldown = 20, Name = "FieldOfView" },
-	PorkCall = { cooldown = 20, Name = "PorkCall" },
-	SpeedBoost = { cooldown = 20, Name = "SpeedBoost" },
+	Rocket = { cooldown = 10, Name = "Rocket", CharacterName = "Royal" },
+	FieldOfView = { cooldown = 20, Name = "FieldOfView", CharacterName = "Royal" },
+	PorkCall = { cooldown = 20, Name = "PorkCall", CharacterName = "Pork" },
+	SpeedBoost = { cooldown = 20, Name = "SpeedBoost", CharacterName = "Sanic" },
+	Thunder = { cooldown = 20, Name = "SpeedBoost", CharacterName = "Sanic" },
 }
 
 function NormalAbilitys.Rocket(playerclassproperties)

@@ -28,7 +28,6 @@ function Nextbot.new(
 	self.Ability3 = NormalAbilitys.new(Ability3, self) or ReuseAbility.new(Ability3, self)
 	print(self.Ability1)
 	if not self.Ability2 then
-		print(self.Ability1.config)
 		game.ReplicatedStorage.localnextbotevents.giveproperties:FireClient(player, table.clone(self.Ability1.config))
 	elseif not self.Ability3 then
 		game.ReplicatedStorage.localnextbotevents.giveproperties:FireClient(

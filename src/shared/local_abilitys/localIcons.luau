@@ -1,61 +1,68 @@
+local StarterPlayer = game:GetService("StarterPlayer")
+local NextbotUiInfo = require(StarterPlayer.StarterPlayerScripts.Rojo_Scripts.Ui.NextbotUiInfo)
 local abilityicon = {}
 
-function abilityicon.createui(player: Player, index, Ability)
-	local originalsize = game.ReplicatedFirst.uiconecept.UiAbilityIcon.Size
-	local originalpos = game.ReplicatedFirst.uiconecept.UiAbilityIcon.Position
-	local buttonposition =
-		UDim2.new(originalpos.X.Scale, 0, originalpos.Y.Scale - (originalsize.Y.Scale + 0.05) * (index - 1), 0) --- (originalsize.Y.Scale) * index,0 )
-	local Ui = game.ReplicatedFirst.uiconecept.UiAbilityIcon:Clone()
+function abilityicon.createui(player: Player, index, Ability, CharacterName)
+	local y = 0.7
+
+	if index == 2 then
+		y = 0.5
+	end
+
+	local buttonposition = UDim2.fromScale(0.5 + index / 10, y) --- (originalsize.Y.Scale) * index,0 )
+	local Ui = game.ReplicatedStorage.Ui:FindFirstChild("Ability").AbilityButton
 	Ui.Position = buttonposition
 	Ui.Parent = player.PlayerGui:FindFirstChild("AbilityUI")
 	print(player, Ui.Parent)
-	abilityicon[Ability](Ui)
+	abilityicon[Ability](Ui, index, CharacterName)
 	return Ui
 end
 
-function abilityicon.Beam(ui)
-	local imageobject: ImageLabel = ui.Icon
-	imageobject.Image = "rbxassetid://11375297133"
-	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
-	AbilityText.Text = "Beam :)"
-end
-
-function abilityicon.ShapeShift(ui)
-	local imageobject: ImageLabel = ui.Icon
-	imageobject.Image = "rbxassetid://11375297133"
-	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
-	AbilityText.Text = "ShapeShift :)"
+function abilityicon.ShapeShift(ui, index, Name)
+	local imageobject: ImageButton = ui.Canvas.ImageButton
+	imageobject.Image = NextbotUiInfo[Name].AbilityIcons[index]
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")
+	AbilityText.Text = "ShapeShift"
 	local TextLabel: TextLabel = Instance.new("TextLabel")
 	TextLabel.Parent = ui
-	TextLabel.Position = imageobject.Position + UDim2.new(ui.Position.X.Scale / 2 * -1, 0, -0.3, 0)
+	TextLabel.Position = imageobject.Position + UDim2.fromScale(ui.Position.X.Scale / 2 * -1, -0.3)
 	TextLabel.Text = "10"
-	TextLabel.Name = "TimeUntilBack"
+	TextLabel.Name = "Cooldown"
 	TextLabel.Visible = true
 	TextLabel.TextSize = 20
 	TextLabel.BorderSizePixel = 0
+	TextLabel.Visible = false
 end
-function abilityicon.Rocket(ui)
-	local imageobject: ImageLabel = ui.Icon
-	imageobject.Image = "rbxassetid://11375297133"
-	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
-	AbilityText.Text = "Rocket hehehehea"
+function abilityicon.Rocket(ui, index, Name)
+	local imageobject: ImageButton = ui.Canvas.ImageButton
+	imageobject.Image = NextbotUiInfo[Name].AbilityIcons[index]
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")
+	AbilityText.Text = Name
 end
-function abilityicon.FieldOfView(ui)
-	local imageobject: ImageLabel = ui.Icon
-	imageobject.Image = "rbxassetid://11375297133"
-	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
-	AbilityText.Text = "I can Blind Enemys im tuff"
+function abilityicon.FieldOfView(ui, index, Name)
+	local imageobject: ImageButton = ui.Canvas.ImageButton
+	imageobject.Image = NextbotUiInfo.Royal.AbilityIcons[index]
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")
+	AbilityText.Text = Name
 end
-function abilityicon.PorkCall(ui)
-	local imageobject: ImageLabel = ui.Icon
-	imageobject.Image = "rbxassetid://11375297133"
-	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
-	AbilityText.Text = "Call"
+function abilityicon.PorkCall(ui, index, Name)
+	local imageobject: ImageButton = ui.Canvas.ImageButton
+	imageobject.Image = NextbotUiInfo[Name].AbilityIcons[index]
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")
+	AbilityText.Text = Name
 end
-function abilityicon.SpeedBoost(ui)
-	local imageobject: ImageLabel = ui.Icon
-	imageobject.Image = "rbxassetid://11375297133"
-	local AbilityText: TextLabel = ui:FindFirstChild("AbilityInfo")
-	AbilityText.Text = "Call"
+function abilityicon.SpeedBoost(ui, index, Name)
+	local imageobject: ImageButton = ui.Canvas.ImageButton
+	print(NextbotUiInfo[Name], Name, NextbotUiInfo)
+	imageobject.Image = NextbotUiInfo[Name].AbilityIcons[index]
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")
+	AbilityText.Text = Name
+end
+function abilityicon.Thunder(ui, index, Name)
+	local imageobject: ImageButton = ui.Canvas.ImageButton
+
+	imageobject.Image = NextbotUiInfo[Name].AbilityIcons[index]
+	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")
+	AbilityText.Text = Name
 end
 return abilityicon
