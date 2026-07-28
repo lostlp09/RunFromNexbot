@@ -74,60 +74,15 @@ if isonmobile() then
 	enableMobileUi()
 end
 function slide()
-	local root = character:FindFirstChild("HumanoidRootPart")
-	local oldcframe = root.CFrame.Rotation
 	if os.clock() - cooldown < slidecooldown then
 		return
 	end
+	game.ReplicatedStorage.Event.Movment.Slide:FireServer()
 	cooldown = os.clock()
-	if not movmentfunctions.isonfloor(character:FindFirstChild("HumanoidRootPart"), 4) then
-		return
-	end
-	local allow = game.ReplicatedStorage.Playermovment.slidfunc:InvokeServer()
-	if not allow then
-		return
-	end
-	slideAnim:Play()
+	slideAnim:Play(0.2)
 	if firstperson then
 		tween_sliding:Play()
 	end
-	humanoid.WalkSpeed = 0
-	local direction = root.CFrame.LookVector * -1
-	local attachment = root.RootAttachment
-	local alignorientation = Instance.new("AlignOrientation")
-	alignorientation.MaxTorque = math.huge
-	alignorientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
-	alignorientation.CFrame = CFrame.lookAt(root.Position, root.Position + root.CFrame.LookVector)
-	alignorientation.RigidityEnabled = true
-	alignorientation.Attachment0 = attachment
-	alignorientation.Parent = root
-	alignorientation.Responsiveness = 200
-	local velocity = Instance.new("LinearVelocity")
-	velocity.Attachment0 = attachment
-	velocity.Parent = root
-	velocity.MaxForce = math.huge
-	local loopforshorttime
-	loopforshorttime = Runservice.Heartbeat:Connect(function(deltatime)
-		local raycastwall =
-			game.Workspace:Raycast(root.Position - Vector3.new(0, -2.75, 0), root.CFrame.LookVector * 3, raycastparams)
-		if raycastwall then
-			print("WANDDDDDDDDDDD")
-			root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-			velocity:Destroy()
-			slideAnim:Stop()
-			alignorientation:Destroy()
-			loopforshorttime:Disconnect()
-		end
-		local raycastforfloor = game.Workspace:Raycast(root.Position, Vector3.new(0, -5, 0), raycastparams)
-		if raycastforfloor then
-			local dotProduct = raycastforfloor.Normal:Dot(Vector3.new(0, 1, 0))
-			local angle = math.deg(math.acos(dotProduct))
-			direction = root.CFrame.LookVector:Cross(raycastforfloor.Normal):Cross(raycastforfloor.Normal)
-		end
-		velocity.VectorVelocity = direction.Unit * -160
-	end)
-	game.Debris:AddItem(velocity, 0.5)
-	game.Debris:AddItem(alignorientation, 0.5)
 	task.delay(0.48, function()
 		if running then
 			if firstperson then
@@ -142,15 +97,7 @@ function slide()
 
 			humanoid.WalkSpeed = 32
 		end
-	end)
-	task.delay(0.5, function()
-		print("PLS_DESTROY")
-		if not velocity then
-			return
-		end
-
-		slideAnim:Stop()
-		loopforshorttime:Disconnect()
+		slideAnim:Stop(0.2)
 	end)
 end
 local connection
