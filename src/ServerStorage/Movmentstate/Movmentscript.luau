@@ -11,24 +11,6 @@ function movment.addplayer(player)
 	print(playerstatus)
 end
 
-function movment.activate()
-	remotefunction.OnServerInvoke = function(player: Player)
-		print(nextbotplayer.Nextbot_player[player.UserId])
-		if player.Team == game.Teams.Nextbots and nextbotplayer.Nextbot_player[player.UserId].Name == "CoolGuy" then
-			player:Kick("Cheat or bug idk")
-		end
-		print("slide")
-		local character = player.Character
-		local root = character:FindFirstChild("HumanoidRootPart")
-		if not movmentfunctions.isonfloor(root, 12) then
-			return false
-		end
-		if os.clock() - playerstatus[player.UserId]["lastsliding"] < slidecooldown then
-			return false
-		end
-		playerstatus[player.UserId]["lastsliding"] = os.clock()
-		return true
-	end
-end
+function movment.activate() end
 
 return movment

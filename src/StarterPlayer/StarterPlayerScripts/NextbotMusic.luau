@@ -12,12 +12,15 @@ end)
 game.ReplicatedStorage.Event.SoundPlayer.ChangeFollowingMusic.OnClientEvent:Connect(function(UserID, SongID, duration)
 	local Enemyplayer: Player = Players:GetPlayerByUserId(UserID)
 	local Character = Enemyplayer.Character
-	local FollowMusic = Character:FindFirstChild("FollowMusic")
+	local Root = Character:FindFirstChild("HumanoidRootPart")
+	local FollowMusic = Root:FindFirstChild("FollowMusic")
 	if not FollowMusic then
+		print("no Block Found")
 		return
 	end
 	local Sound: Sound = FollowMusic:FindFirstChild("Sound")
 	local oldid = Sound.SoundId
+	print(SongID, oldid)
 	Sound:Stop()
 	Sound.SoundId = SongID
 	Sound:Play()
