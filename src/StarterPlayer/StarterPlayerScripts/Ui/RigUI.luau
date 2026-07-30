@@ -1,7 +1,5 @@
 local RigUi = {}
 local player = game.Players.LocalPlayer
-local Players = game:GetService("Players")
-local playerservice = game:GetService("Players")
 
 local RiGscreen = player.PlayerGui.Rig
 local Rig = RiGscreen.ViewportFrame.WorldModel.R6
@@ -25,7 +23,7 @@ end
 function RigUi.RigVisible()
 	NexbotModel.Transparency = 1
 	NexbotModel.Decal.Transparency = 1
-	for i, part in Rig:GetDescendants() do
+	for _, part in Rig:GetDescendants() do
 		if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
 			part.Transparency = 0
 		end
@@ -35,7 +33,7 @@ function RigUi.RigInVisible()
 	print(NexbotModel)
 	NexbotModel.Transparency = 0
 	NexbotModel.Decal.Transparency = 0
-	for i, part in Rig:GetDescendants() do
+	for _, part in Rig:GetDescendants() do
 		if part:IsA("BasePart") then
 			part.Transparency = 1
 		end

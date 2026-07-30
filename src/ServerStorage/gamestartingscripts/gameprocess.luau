@@ -11,7 +11,7 @@ gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
 	repeat
 		task.wait(1)
-	until #gameprocess.players > 1
+	until #gameprocess.players > 3
 
 	print("enough players")
 	task.wait(10)

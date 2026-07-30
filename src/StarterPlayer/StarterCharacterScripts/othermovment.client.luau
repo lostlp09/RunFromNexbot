@@ -4,8 +4,8 @@ local slidecooldown = 3
 local movmentfunctions = require(ReplicatedStorage.Shared.MathForMovment)
 local player = game.Players.LocalPlayer
 local humanoid: Humanoid = player.Character:FindFirstChild("Humanoid")
-local animatior = humanoid:WaitForChild("Animator")
-local character = player.Character
+local animatior: Animator = humanoid:WaitForChild("Animator")
+local character = player.Character or player.CharacterAdded:wait()
 local GuiService = game:GetService("GuiService")
 local runanimation = animatior:LoadAnimation(character.Animation.RunAnimation)
 
@@ -13,40 +13,19 @@ local slideAnim = animatior:LoadAnimation(character.Animation.SlideAnimation)
 local uip = game:GetService("UserInputService")
 local running = false
 local Contentprovidor = game:GetService("ContentProvider")
-local Runservice = game:GetService("RunService")
 local firstperson = false
-local tweenproperties_sliding = {
-	CameraOffset = Vector3.new(0, -2, 1),
-}
-local assets = {
-	"rbxassetid://9525534210",
-	"rbxassetid://1171402807",
-}
-local tweenproperties_running = {
-	CameraOffset = Vector3.new(0, -1, -1.5),
-}
-local tweenproperties_normal = {
-	CameraOffset = Vector3.new(0, -0.5, -1),
-}
-local head = player.Character:FindFirstChild("Head")
-local Tweenservice = game:GetService("TweenService")
-local tweeninfo = TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In, 0, false)
-local tweeninfo_sliding = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In, 0, false)
-local tween_running = Tweenservice:Create(humanoid, tweeninfo, tweenproperties_running)
-local tween_run_afterslide = Tweenservice:Create(humanoid, tweeninfo_sliding, tweenproperties_running)
-local tween_normal_afterslide = Tweenservice:Create(humanoid, tweeninfo_sliding, tweenproperties_normal)
-local tween_normal = Tweenservice:Create(humanoid, tweeninfo, tweenproperties_normal)
-local tween_sliding = Tweenservice:Create(humanoid, tweeninfo_sliding, tweenproperties_sliding)
+runanimation.Priority = Enum.AnimationPriority.Action
+slideAnim.Priority = Enum.AnimationPriority.Action2
 local raycastparams = RaycastParams.new()
 raycastparams.FilterDescendantsInstances = { character }
 raycastparams.FilterType = Enum.RaycastFilterType.Exclude
 function startrun()
 	running = true
-	humanoid.WalkSpeed = 64
+	ReplicatedStorage.Event.Movment.Sprint:FireServer()
 end
 function cancelrun()
 	running = false
-	humanoid.WalkSpeed = 16
+	ReplicatedStorage.Event.Movment.Sprint:FireServer()
 end
 function enableMobileUi()
 	local mobileUi = game.ReplicatedStorage.Ui.mobileui:Clone()
@@ -63,10 +42,11 @@ function enableMobileUi()
 		end
 	end)
 end
-Contentprovidor:PreloadAsync(assets)
 function isonmobile()
 	if uip.TouchEnabled and not uip.KeyboardEnabled then
 		return true
+	else
+		return false
 	end
 end
 local mobile = false
@@ -79,26 +59,6 @@ function slide()
 	end
 	game.ReplicatedStorage.Event.Movment.Slide:FireServer()
 	cooldown = os.clock()
-	slideAnim:Play(0.2)
-	if firstperson then
-		tween_sliding:Play()
-	end
-	task.delay(0.48, function()
-		if running then
-			if firstperson then
-				tween_run_afterslide:Play()
-			end
-
-			humanoid.WalkSpeed = 64
-		else
-			if firstperson then
-				tween_normal_afterslide:Play()
-			end
-
-			humanoid.WalkSpeed = 32
-		end
-		slideAnim:Stop(0.2)
-	end)
 end
 local connection
 connection = uip.TouchPinch:Connect(function()
@@ -114,69 +74,43 @@ uip.InputBegan:Connect(function(input)
 		startrun()
 	end
 end)
-GuiService.MenuOpened:Connect(function()
-	runanimation:Stop()
-end)
-humanoid.Running:Connect(function(speed)
-	if running then
-		if speed > 16 then
-			if not runanimation.IsPlaying then
-				if firstperson then
-					tween_running:Play()
-				end
-
-				runanimation:Play()
-			end
-		elseif speed == 0 then
-			if runanimation.IsPlaying then
-				runanimation:Stop()
-				if firstperson then
-					tween_normal:Play()
-				end
-			end
-		end
-	else
-		if runanimation.IsPlaying then
-			runanimation:Stop()
-			if firstperson then
-				tween_normal:Play()
-			end
-		end
-	end
-end)
-humanoid.StateChanged:Connect(function(old, new)
-	if new == Enum.HumanoidStateType.Landed then
-		if running then
-			if firstperson then
-				tween_running:Play()
-			end
-			runanimation:Play()
-		end
-	elseif new == Enum.HumanoidStateType.Jumping or new == Enum.HumanoidStateType.Freefall then
-		runanimation:Stop()
-	end
-end)
 uip.InputEnded:Connect(function(input)
 	if input.KeyCode == Enum.KeyCode.LeftShift or input.KeyCode == Enum.KeyCode.ButtonL3 then
 		cancelrun()
 	end
 end)
-head:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(function()
-	if head.LocalTransparencyModifier == 1 then
-		if running then
-			humanoid.CameraOffset = tweenproperties_running["CameraOffset"]
-		else
-			humanoid.CameraOffset = Vector3.new(0, -0.5, -1)
-		end
-		firstperson = true
-	else
-		firstperson = false
-		humanoid.CameraOffset = Vector3.zero
-	end
-end)
 
-script.Changed:Connect(function(property)
-	if property == "Enabled" then
-		print("nooooooooooooooooooooooooooooooooooooooooo")
+humanoid.Running:Connect(function(speed)
+	if running then
+		if speed > 16 then
+			if not runanimation.IsPlaying then
+				print("Running")
+			end
+		elseif speed == 0 then
+			if runanimation.IsPlaying then
+				print("is not doing anything")
+			end
+		end
+	else
+		if runanimation.IsPlaying then
+			print("is not doing anything")
+		end
 	end
 end)
+humanoid.StateChanged:Connect(function(oldState: Enum.HumanoidStateType, newstate: Enum.HumanoidStateType)
+	local idleID = "rbxassetid://91015050376480"
+	print("cool")
+end)
+--head:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(function()
+--if head.LocalTransparencyModifier == 1 then
+--	if running then
+--		humanoid.CameraOffset = tweenproperties_running["CameraOffset"]
+--	else
+--		humanoid.CameraOffset = Vector3.new(0, -0.5, -1)
+--	end
+--	firstperson = true
+--else
+--	firstperson = false
+--	humanoid.CameraOffset = Vector3.zero
+--	end
+--end)

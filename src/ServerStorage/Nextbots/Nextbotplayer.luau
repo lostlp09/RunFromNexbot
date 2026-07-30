@@ -1,4 +1,3 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Nextbotgiver = {}
 local Nextbots = require(script.Parent.Nextbotarray)
 local Nextbotclass = require(script.Parent.Nexbotscripts)

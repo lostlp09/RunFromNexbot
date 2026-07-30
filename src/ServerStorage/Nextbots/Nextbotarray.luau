@@ -1,5 +1,5 @@
 local createNextBot = {}
---Name ,TextureID,              Walkspeed  idk  SoundId
+--Name ,          TextureID,              Walkspeed  idk  SoundId
 createNextBot.Royal =
 	{ "Royal", "rbxassetid://11375297133", 64, true, "rbxassetid://95039478522269", "FieldOfView", "Rocket", nil }
 createNextBot.Pork =
