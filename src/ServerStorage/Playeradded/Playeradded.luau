@@ -1,12 +1,16 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Playeradded = {}
 local movmentstatscript = require(script.Parent.Parent.Movmentstate.Movmentscript)
 local gameProcessScript = require(script.Parent.Parent.gamestartingscripts.gameprocess)
 local DataSave = require(script.Parent.Save)
 local Data = require(script.Parent.PlayerData)
+local InputFolder = ReplicatedStorage:WaitForChild("CustomInputs")
 local UiUpdatedArray = {}
 
 function Playeradded.activate()
 	game.Players.PlayerAdded:Connect(function(player)
+		local InputClone = InputFolder:Clone()
+		InputClone.Parent = player
 		player.CharacterAdded:Connect(function(character)
 			if UiUpdatedArray[player.UserId] == nil then
 				print("cool")
@@ -34,6 +38,24 @@ function Playeradded.activate()
 				print("playerdied")
 				gameProcessScript.playerdied(player)
 			end)
+			local alignorientation = Instance.new("AlignOrientation")
+			local root = character:FindFirstChild("HumanoidRootPart")
+			alignorientation.MaxTorque = math.huge
+			local attachment = root.RootAttachment
+			alignorientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
+			alignorientation.CFrame = CFrame.lookAt(root.Position, root.Position + root.CFrame.LookVector)
+			alignorientation.RigidityEnabled = true
+			alignorientation.Enabled = false
+			alignorientation.Attachment0 = attachment
+			alignorientation.Responsiveness = 200
+			alignorientation.Name = "AlignOrientationSlide"
+			alignorientation.Parent = root
+			local velocity: LinearVelocity = Instance.new("LinearVelocity")
+			velocity.Attachment0 = attachment
+			velocity.Name = "SlideVelocity"
+			velocity.MaxForce = math.huge
+			velocity.Enabled = false
+			velocity.Parent = root
 		end)
 
 		DataSave.DeleteData(player)
