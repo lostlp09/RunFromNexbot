@@ -8,21 +8,33 @@ local SlideAnimation: Animation = ReplicatedStorage.Animations.Slide.SlideAnimat
 if RunService:IsClient() then
 	ContentProvider:PreloadAsync({ SlideAnimation.AnimationId, SprintAnimation.AnimationId })
 end
-
+local raycastparams = RaycastParams.new()
+raycastparams.FilterType = Enum.RaycastFilterType.Exclude
 function MovmentShared.RunFunction()
 	print("Do i even get Created")
 	RunService:BindToSimulation(function()
-		print("hello ?")
 		for _, player in Players:GetPlayers() do
 			local Character = player.Character
 			if not Character then
 				continue
 			end
-			local Root = Character:FindFirstChild("HumanoidRootPart")
+
+			local Root: Part = Character:FindFirstChild("HumanoidRootPart")
+			if not Root then
+				continue
+			end
 			local InputsFolder = player:FindFirstChild("CustomInputs")
 			local Humanoid: Humanoid = Character:FindFirstChild("Humanoid")
 			local Animator = Humanoid:FindFirstChild("Animator")
+			raycastparams.FilterDescendantsInstances = { Character }
+			local raycastforfloor = game.Workspace:Raycast(Root.Position, Vector3.new(0, -5, 0), raycastparams)
 
+			if raycastforfloor then
+				if raycastforfloor.Instance:GetAttribute("Pad") then
+					Root.AssemblyLinearVelocity =
+						Vector3.new(Root.AssemblyLinearVelocity.X, 200, Root.AssemblyLinearVelocity.Z)
+				end
+			end
 			if not InputsFolder then
 				continue
 			end
@@ -40,28 +52,13 @@ function MovmentShared.RunFunction()
 						then
 							continue
 						end
-						local ExestingSlideAnimation = Animator:GetTrackByAnimationId(SlideAnimation.AnimationId)
-						if ExestingSlideAnimation and RunService:IsServer() then
-							ExestingSlideAnimation:Play(0.3)
-						else
-							if RunService:IsClient() then
-								local slideAnimation = Animator:LoadAnimation(SlideAnimation)
-								slideAnimation:Play(0.3)
-							end
-						end
-						local raycastparams = RaycastParams.new()
-						raycastparams.FilterType = Enum.RaycastFilterType.Exclude
-						raycastparams.FilterDescendantsInstances = { Character }
-						local raycastforfloor =
-							game.Workspace:Raycast(Root.Position, Vector3.new(0, -5, 0), raycastparams)
+						local direction = Root.CFrame.LookVector
 						if not raycastforfloor then
 							continue
 						end
-
-						local direction =
-							Root.CFrame.LookVector:Cross(raycastforfloor.Normal):Cross(raycastforfloor.Normal)
-						local AlignOrientation: AlignOrientation = Root:FindFirstChild("AlignOrientationSlide")
-						local Velocity: LinearVelocity = Root:FindFirstChild("SlideVelocity")
+						direction = Root.CFrame.LookVector:Cross(raycastforfloor.Normal):Cross(raycastforfloor.Normal)
+						local AlignOrientation = Root:FindFirstChild("AlignOrientationSlide")
+						local Velocity = Root:FindFirstChild("SlideVelocity")
 						if not Velocity then
 							continue
 						end
@@ -81,16 +78,6 @@ function MovmentShared.RunFunction()
 							AlignOrientation.Enabled = false
 							Character:SetAttribute("Sliding", false)
 							Humanoid.JumpHeight = oldHight
-							if ExestingSlideAnimation then
-								ExestingSlideAnimation:Stop(0.3)
-							else
-								Animator:GetTrackByAnimationId(SlideAnimation.AnimationId):Stop(0.3)
-							end
-							if Character:GetAttribute("Sprinting") then
-								local Sprint = Animator:GetTrackByAnimationId(SprintAnimation.AnimationId)
-									or Animator:LoadAnimation(SprintAnimation)
-								Sprint:Play()
-							end
 						end)
 					else
 						Character:SetAttribute("SlidingPressed", false)
@@ -98,27 +85,14 @@ function MovmentShared.RunFunction()
 				elseif Input.Name == "Sprint" then
 					local IsSliding = Character:GetAttribute("Sliding")
 					local IsSprinting = Character:GetAttribute("Sprinting")
-					local ExestingSlideAnimation = Animator:GetTrackByAnimationId(SprintAnimation.AnimationId)
 					if isPressed then
 						if not IsSprinting and not IsSliding then
-							if ExestingSlideAnimation and RunService:IsServer() then
-								ExestingSlideAnimation:Play(0.3)
-							else
-								if RunService:IsClient() then
-									local SprintAni = Animator:LoadAnimation(SprintAnimation)
-									SprintAni:Play(0.3)
-								end
-							end
 							Character:SetAttribute("Sprinting", true)
 							Humanoid.WalkSpeed = 64
 						end
 					elseif IsSprinting then
 						Humanoid.WalkSpeed = 16
 						Character:SetAttribute("Sprinting", false)
-						local SprintAni = Animator:GetTrackByAnimationId(SprintAnimation.AnimationId)
-						if SprintAni then
-							SprintAni:Stop()
-						end
 					end
 				end
 			end

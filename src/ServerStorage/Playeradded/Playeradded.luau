@@ -11,7 +11,7 @@ function Playeradded.activate()
 	game.Players.PlayerAdded:Connect(function(player)
 		local InputClone = InputFolder:Clone()
 		InputClone.Parent = player
-		player.CharacterAdded:Connect(function(character)
+		player.CharacterAdded:Connect(function(character: Part)
 			if UiUpdatedArray[player.UserId] == nil then
 				print("cool")
 				--local humanoid:Humanoid = player.PlayerGui.Rig.ViewportFrame.WorldModel.R6:FindFirstChild("Humanoid")
@@ -43,7 +43,6 @@ function Playeradded.activate()
 			alignorientation.MaxTorque = math.huge
 			local attachment = root.RootAttachment
 			alignorientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
-			alignorientation.CFrame = CFrame.lookAt(root.Position, root.Position + root.CFrame.LookVector)
 			alignorientation.RigidityEnabled = true
 			alignorientation.Enabled = false
 			alignorientation.Attachment0 = attachment
