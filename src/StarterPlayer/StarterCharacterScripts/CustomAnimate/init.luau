@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 local module = {}
 local Character = script.Parent.Parent
 local Humanoid: Humanoid = Character.Humanoid or Character:WaitForChild("Humanoid")
-local Animator: Animator = Humanoid:FindFirstChild("Animator")
+local Animator = Humanoid:FindFirstChild("Animator")
 local Animations = ReplicatedStorage:FindFirstChild("Animations")
 local SlideObject = Animations.Slide:FindFirstChild("SlideAnimation")
 local SprintObject = Animations.Sprint:FindFirstChild("SprintAnimation")
@@ -20,9 +20,16 @@ function module.Initialize()
 		local HumanoidState = Humanoid:GetState()
 		local IsSliding = Character:GetAttribute("Sliding")
 		local IsSprinting = Character:GetAttribute("Sprinting")
+		local IsEmoting = Character:GetAttribute("Emoting")
 		local IsOnAir = false
 
 		local speed = Root.AssemblyLinearVelocity.Magnitude
+		if speed > 1 and IsEmoting then
+			Character:SetAttribute("Emoting", false)
+			for _, Track in Animator:GetPlayingAnimationTracks() do
+				Track:Stop()
+			end
+		end
 		if HumanoidState == Enum.HumanoidStateType.Freefall or HumanoidState == Enum.HumanoidStateType.Jumping then
 			IsOnAir = true
 		end
@@ -39,14 +46,21 @@ function module.Initialize()
 			end
 		end
 		if IsSprinting and not IsOnAir and not IsSliding and speed > 1 then
-			print(IsOnAir, speed)
 			if not SprintAnimation.IsPlaying then
 				SprintAnimation:Play()
 			end
 		elseif SprintAnimation.IsPlaying then
-			print(speed)
 			SprintAnimation:Stop()
-			print(SprintAnimation.IsPlaying)
+		end
+	end)
+end
+
+if RunService:IsServer() then
+	Character:GetAttributeChangedSignal("Emoting"):Connect(function()
+		local NotEmoting = not Character:GetAttribute("Emoting")
+		if NotEmoting then
+			local EmoteBlock = Character.HumanoidRootPart:FindFirstChild("EmoteBlock")
+			EmoteBlock:Destroy()
 		end
 	end)
 end

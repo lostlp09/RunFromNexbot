@@ -3,15 +3,23 @@ local SoundCreator = {}
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
-function SoundCreator.new(Id, position: Vector3, speed)
+local EmotePlayer = require(ReplicatedStorage.Shared.EmotePlayer.EmotePlayer)
+function SoundCreator.new(Id, position: Vector3, speed, returnable)
 	local SoundBlock = ReplicatedStorage.Event:FindFirstChild("SoundPlayer").SoundBlock:Clone()
 	SoundBlock.Parent = game.Workspace
 	SoundBlock.Position = position
 	local Sound: Sound = SoundBlock:FindFirstChild("Sound")
 	Sound.SoundId = Id
 	Sound:Play()
-	Sound.Ended:Wait()
-	SoundBlock:Destroy()
+	if not returnable then
+		Sound.Ended:Wait()
+		SoundBlock:Destroy()
+		return nil
+	else
+		return SoundBlock
+	end
+
+	return SoundBlock
 end
 function SoundCreator.newFollwingSound(Id, UserId: number, duration: number, speed: number, returnable: boolean)
 	local SoundBlock = ReplicatedStorage.Event:FindFirstChild("SoundPlayer").FollowingSoundBlock:Clone()
@@ -57,8 +65,5 @@ SoundCreator.States = {
 		SoundCreator.new2DSoundEffect("rbxassetid://99933358254659", 1)
 	end,
 }
-ReplicatedStorage.Event:FindFirstChild("SoundPlayer").PlaySound.OnClientEvent:Connect(function(Id, PositionOrUserId)
-	task.spawn(SoundCreator.States[Id], PositionOrUserId)
-end)
 
 return SoundCreator

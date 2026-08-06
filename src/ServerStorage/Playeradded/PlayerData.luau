@@ -1,17 +1,17 @@
 local PlayerData = {}
 local Saveclass = require(script.Parent.Save)
-local Startertable = 
-	{	["Wins"] = 0 ,
-		["Nextbotequiped"] = "Peace",
-		["NextbotOwned"]  = {["Royal"] = false},
-		["EmoteOwned"] = {["Griddy"] = true,["Worm"] = false},
-		["EmoteEquiped"] = {["1"]= false,["2"] = false,["3"]= false,["4"] = false},
-		["Currency"] = 1000
-	}
+local Startertable = {
+	["Wins"] = 0,
+	["Nextbotequiped"] = "Peace",
+	["NextbotOwned"] = { ["Royal"] = false },
+	["EmoteOwned"] = { ["Crazy"] = true, ["Shuffle"] = true, ["Chill"] = false },
+	["EmoteEquiped"] = { ["1"] = "Crazy", ["2"] = "Shuffle", ["3"] = false, ["4"] = false },
+	["Currency"] = 1000,
+}
 
 local function DeepCopy(GivenTable)
 	local Tabel = {}
-	for Key,value in pairs(GivenTable) do
+	for Key, value in pairs(GivenTable) do
 		if type(value) == "table" then
 			Tabel[Key] = DeepCopy(value)
 		else
@@ -19,14 +19,13 @@ local function DeepCopy(GivenTable)
 		end
 	end
 	return Tabel
-
 end
-local function DataCheck(TableToCheck,PerfektTable)
+local function DataCheck(TableToCheck, PerfektTable)
 	local EndTable = {}
-	for Key,value in pairs(PerfektTable) do
-		if TableToCheck[Key] ~=nil  then
+	for Key, value in pairs(PerfektTable) do
+		if TableToCheck[Key] ~= nil then
 			if type(value) == "table" then
-				EndTable[Key] = DataCheck(TableToCheck[Key],value)
+				EndTable[Key] = DataCheck(TableToCheck[Key], value)
 			else
 				EndTable[Key] = TableToCheck[Key]
 			end
@@ -40,15 +39,15 @@ local function DataCheck(TableToCheck,PerfektTable)
 	end
 	return EndTable
 end
-function PlayerData.addplayer(player:Player,Data)
+function PlayerData.addplayer(player: Player, Data)
 	if Data then
 		print(Data)
-		PlayerData[player.UserId] = DataCheck(Data,Startertable)
+		PlayerData[player.UserId] = DataCheck(Data, Startertable)
 	else
 		PlayerData[player.UserId] = DeepCopy(Startertable)
 	end
-	Saveclass.SaveData(player,PlayerData[player.UserId])
+	Saveclass.SaveData(player, PlayerData[player.UserId])
 	print(PlayerData[player.UserId])
-	game.ReplicatedStorage.ClientData.GiveClientData:FireClient(player,PlayerData[player.UserId])
+	game.ReplicatedStorage.ClientData.GiveClientData:FireClient(player, PlayerData[player.UserId])
 end
 return PlayerData
