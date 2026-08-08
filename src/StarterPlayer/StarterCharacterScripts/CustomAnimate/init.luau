@@ -45,7 +45,7 @@ function module.Initialize()
 				SlideAnimation:Stop()
 			end
 		end
-		if IsSprinting and not IsOnAir and not IsSliding and speed > 1 then
+		if IsSprinting and not IsOnAir and not IsSliding and speed > 3 then
 			if not SprintAnimation.IsPlaying then
 				SprintAnimation:Play()
 			end

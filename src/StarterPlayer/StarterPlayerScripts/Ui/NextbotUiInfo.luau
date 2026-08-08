@@ -7,8 +7,8 @@ local NextbotUiInfo = {
 		HP = 200,
 		Walkspeed = 64,
 
-		Ability = { Ability1 = "Rocket", Ability2 = "nothing", Ability3 = "nothing" },
-		AbilityIcons = { "rbxassetid://83771048581867", "rbxassetid://93547759136257", "nothing" },
+		Ability = { Ability1 = "Laugh", Ability2 = "Rocket", Ability3 = "nothing" },
+		AbilityIcons = { "rbxassetid://93547759136257", "rbxassetid://122710118927247", "nothing" },
 		CoinPrice = 200,
 	},
 	Pork = {

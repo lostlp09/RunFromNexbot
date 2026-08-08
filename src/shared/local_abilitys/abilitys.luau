@@ -60,6 +60,7 @@ function localabiltys.PorkCall()
 	print("Cool")
 end
 function localabiltys.SpeedBoost()
+	print("Ich werde einfach so ausgeführt lol omg lul")
 	local Camera: Camera = Workspace.Camera
 	local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out, 0, false, 0)
 	local propertyTable = {
@@ -73,5 +74,8 @@ function localabiltys.SpeedBoost()
 	}
 	tween = TweenService:Create(Camera, tweenInfo, propertyTable)
 	tween:Play()
+end
+function localabiltys.Thunder()
+	print("Test")
 end
 return localabiltys

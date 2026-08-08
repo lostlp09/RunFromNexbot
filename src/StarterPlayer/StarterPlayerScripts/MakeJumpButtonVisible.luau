@@ -1,13 +1,14 @@
+local module = {}
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
-local MobileGui: ScreenGui = ReplicatedStorage.Ui:WaitForChild("MobileUi")
+local MobileGui = ReplicatedStorage.Ui:WaitForChild("MobileUi")
 local SprintButton: ImageButton
-local function isOnMobile()
+function module.isOnMobile()
 	return UserInputService.TouchEnabled
 end
-if isOnMobile() then
+if module.isOnMobile() then
 	local Jumpbutton: ImageButton = player.PlayerGui:WaitForChild("TouchGui").TouchControlFrame.JumpButton
 	Jumpbutton.Visible = true
 	MobileGui = MobileGui:Clone()
@@ -22,3 +23,7 @@ if isOnMobile() then
 
 	print(SprintBinding.UIButton)
 end
+function module.TurnSprintButton(bool)
+	SprintButton.Visible = bool
+end
+return module

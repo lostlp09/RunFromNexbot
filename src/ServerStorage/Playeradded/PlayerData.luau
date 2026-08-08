@@ -2,10 +2,10 @@ local PlayerData = {}
 local Saveclass = require(script.Parent.Save)
 local Startertable = {
 	["Wins"] = 0,
-	["Nextbotequiped"] = "Peace",
-	["NextbotOwned"] = { ["Royal"] = false },
-	["EmoteOwned"] = { ["Crazy"] = true, ["Shuffle"] = true, ["Chill"] = false },
-	["EmoteEquiped"] = { ["1"] = "Crazy", ["2"] = "Shuffle", ["3"] = false, ["4"] = false },
+	["NextbotEquiped"] = "Royal",
+	["NextbotOwned"] = { ["Royal"] = true, ["Sanic"] = false, ["Pork"] = false },
+	["EmoteOwned"] = { ["Crazy"] = true, ["Shuffle"] = true, ["Chill"] = true },
+	["EmoteEquiped"] = { ["1"] = "Crazy", ["2"] = "Shuffle", ["3"] = "Chill", ["4"] = false },
 	["Currency"] = 1000,
 }
 

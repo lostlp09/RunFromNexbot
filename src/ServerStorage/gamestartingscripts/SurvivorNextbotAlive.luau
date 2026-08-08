@@ -18,5 +18,11 @@ function SurvivorNextbotAlive.Reset()
 	table.clear(SurvivorNextbotAlive.Survivors)
 	table.clear(SurvivorNextbotAlive.Nextbots)
 end
+function SurvivorNextbotAlive.RemoveSurvivor(index: number)
+	table.remove(SurvivorNextbotAlive.Survivor, index)
+end
+function SurvivorNextbotAlive.RemoveNextbot(index: number)
+	table.remove(SurvivorNextbotAlive.Nextbots, index)
+end
 
 return SurvivorNextbotAlive

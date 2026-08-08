@@ -1,11 +1,11 @@
 local Ui = {}
 local player = game.Players.LocalPlayer
-local InventoryButton = player.PlayerGui:WaitForChild("MainButtons").Inv
+local InventoryButton = player.PlayerGui:WaitForChild("LobbyGui").Inv
 local Clientdata = require(script.Parent:WaitForChild("ClientData"))
 local Inventory = require(script.InventoryUi)
 local ShopScript = require(script.ShopUi)
 local ShopUi = player.PlayerGui:FindFirstChild("ShopUi")
-local ShopButton = player.PlayerGui.MainButtons.ShopButton
+local ShopButton = player.PlayerGui.LobbyGui.ShopButton
 local InventoryUi = player.PlayerGui.inventory
 InventoryButton.MouseButton1Up:Connect(function()
 	Inventory.ChangeVisibility()

@@ -34,7 +34,6 @@ function InventoryUi.ChangeVisibility()
 		Inventory.Enabled = true
 		InventoryUi.LoadCharacters()
 	else
-		Inventory.Enabled = false
 		InventoryUi.Disable()
 	end
 end

@@ -82,16 +82,18 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 		playercolor.HeadColor = bodycolors.HeadColor
 		playercolor.TorsoColor = bodycolors.TorsoColor
 	end
-	local function Secondbilityfunc(player)
+	local function Secondbilityfunc()
 		print("second function ?")
-		local Character = player.Character
+
+		Character = player.Character
+		Character:SetAttribute("ShapeShifting", false)
 		makeplayerinv(player)
 		game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, "ShapeShift", true)
 		Beam.Name = "Beam"
 		Beam.Enabled = true
 		print(classproperties)
 		humanoid.WalkSpeed = classproperties["speed"]
-		Character.Rojo_Scripts:FindFirstChild("othermovment").Enabled = false
+
 		game.ReplicatedStorage.playeranimation.disableanimation:FireClient(player)
 		abilityproperties.reuse = false
 		task.delay(1, function()
@@ -100,7 +102,8 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 	end
 	abilityproperties.reuse = not abilityproperties.reuse
 	if not SecondAbility then
-		game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, "ShapeShift", false)
+		Character:SetAttribute("ShapeShifting", true)
+		--game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, "ShapeShift", false)
 		abilityproperties.running = true
 		local Survivors = {}
 		for _, Enemy: Player in game.Players:GetChildren() do
@@ -130,11 +133,11 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 		end
 		task.delay(10, function()
 			if abilityproperties.reuse then
-				Secondbilityfunc(player)
+				Secondbilityfunc()
 			end
 		end)
 	else
-		Secondbilityfunc(player)
+		Secondbilityfunc()
 	end
 end
 

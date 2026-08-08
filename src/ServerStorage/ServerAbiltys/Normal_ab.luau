@@ -6,6 +6,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Teams = game:GetService("Teams")
+local Workspace = game:GetService("Workspace")
 local SurvivorNextbotAlive = require(ServerStorage.Rojo_Scripts.gamestartingscripts.SurvivorNextbotAlive)
 local Survivors = {}
 local Nextbots = {}
@@ -26,6 +27,7 @@ function NormalAbilitys.new(Ability: string, classproperties)
 	function self.RunAbility()
 		local currenttime = os.clock()
 		if currenttime - self.last_used >= self.cooldown then
+			print(self.config.Name)
 			game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, self.config.Name)
 			print("runTest")
 			self.last_used = currenttime
@@ -42,7 +44,7 @@ NormalAbilitys.Data = {
 	FieldOfView = { cooldown = 20, Name = "FieldOfView", CharacterName = "Royal" },
 	PorkCall = { cooldown = 20, Name = "PorkCall", CharacterName = "Pork" },
 	SpeedBoost = { cooldown = 20, Name = "SpeedBoost", CharacterName = "Sanic" },
-	Thunder = { cooldown = 20, Name = "SpeedBoost", CharacterName = "Sanic" },
+	Thunder = { cooldown = 20, Name = "Thunder", CharacterName = "Sanic" },
 }
 
 function NormalAbilitys.Rocket(playerclassproperties)
@@ -82,6 +84,7 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		local Indicator = game.ReplicatedStorage.Models.Rocket.Indicator:Clone()
 		table.remove(PossibleCandidates, RandomIndex)
 		Indicator.Parent = game.Workspace
+		Indicator.Name = "THunderIndicator"
 		print(RayCast)
 		local direction = RayCast.Normal
 		Indicator:PivotTo(
@@ -145,12 +148,12 @@ function NormalAbilitys.Rocket(playerclassproperties)
 			for _, Enemy in workspace:GetPartsInPart(KillHitBox) do
 				local EnemyHumanoid = Enemy.Parent:FindFirstChild("Humanoid")
 				if EnemyHumanoid then
-					local EnemyPlayer: Player = PlayerService:GetPlayerFromCharacter(Humanoid.Parent)
+					local EnemyPlayer: Player = PlayerService:GetPlayerFromCharacter(EnemyHumanoid.Parent)
 					if Hittplayers[EnemyPlayer.UserId] then
 						continue
 					end
 					Hittplayers[EnemyPlayer.UserId] = true
-					Humanoid.Health = 0
+					EnemyHumanoid.Health = 0
 				end
 			end
 			KillHitBox:Destroy()
@@ -200,8 +203,8 @@ function NormalAbilitys.PorkCall()
 		game.Debris:AddItem(HiglightInstance, 5)
 	end
 
-	for _, EnemyPlayer: Player in Players:getChildren() do
-		if EnemyPlayer.Team ~= Teams.Survivor and EnemyPlayer.Character then
+	for _, EnemyPlayer: Player in SurvivorNextbotAlive.GetSurvivor() do
+		if not EnemyPlayer.Character then
 			continue
 		end
 		ReplicatedStorage.Event.ConsequenceApllier:FireClient(EnemyPlayer, "PorkCall")
@@ -229,11 +232,13 @@ function NormalAbilitys.SpeedBoost(playerclassproperties)
 	)
 end
 function NormalAbilitys.Thunder(playerclassproperties)
-	local Indicator = ReplicatedStorage.Models.Indicator
-	local BoxSize = task.wait(1)
+	local Indicator = ReplicatedStorage.Models.Thunder.Indicator:Clone()
+	local ThunderEffekt = ReplicatedStorage.VFX.Thunder
+	local CFrames = {}
 	for _, player: Player in SurvivorNextbotAlive.GetSurvivor() do
+		local ThunderEffectPart = ThunderEffekt:Clone()
 		local Character = player.Character
-		local Indi
+
 		if not Character then
 			continue
 		end
@@ -245,23 +250,54 @@ function NormalAbilitys.Thunder(playerclassproperties)
 			Vector3.new(0, -500, 0),
 			Raycastprop
 		)
+		Indicator:PivotTo(CFrame.lookAt(root.Position, RayCast.Normal))
+		Indicator.Parent = game.Workspace
 		game.Debris:AddItem(Indicator, 1.2)
-		task.wait(1)
-		local hittedplayers = {}
-		for _, part in workspace:GetPartBoundsInBox(CFrame.new(30, 0.001, 30)) do
-			local Humanoid: Humanoid = part.Parent:FindFirstChild("HumanoidROotPart")
-			if Humanoid then
-				local character = Humanoid.Parent
-				local Enemy = PlayerService:GetPlayerFromCharacter(character)
-				if table.find(hittedplayers, Enemy) or Enemy.Team == Teams.Nextbots then
-					continue
+		table.insert(CFrames, root.CFrame)
+		ThunderEffectPart.Position = Vector3.new(root.Position.X, root.Position.Y + 190, root.Position.Z)
+		ThunderEffectPart.Parent = game.Workspace
+		task.delay(1, function()
+			ThunderEffectPart.Position = Vector3.new(root.Position.X, root.Position.Y + 190, root.Position.Z)
+			ThunderEffectPart.Parent = game.Workspace
+			task.delay(2, function()
+				ThunderEffectPart.Beam1.Enabled = false
+				ThunderEffectPart.Beam2.Enabled = false
+				task.delay(1, function()
+					ThunderEffectPart:Destroy()
+				end)
+			end)
+		end)
+	end
+	task.wait(1)
+	local hittedplayers = {}
+	local overlapparams = OverlapParams.new()
+	local TeamMatesCharacter = {}
+
+	for _, player in SurvivorNextbotAlive.GetNextBots() do
+		local Character = player:FindFirstChild("Character")
+		if Character then
+			table.insert(TeamMatesCharacter, Character)
+		end
+	end
+	table.insert(TeamMatesCharacter, game.Workspace:FindFirstChild("Map"))
+	overlapparams.FilterType = Enum.RaycastFilterType.Exclude
+	overlapparams.FilterDescendantsInstances = TeamMatesCharacter
+	for _ = 1, 20, 1 do
+		for _, position in CFrames do
+			for _, part in workspace:GetPartBoundsInBox(position, Vector3.new(15, 50, 15), overlapparams) do
+				local Humanoid: Humanoid = part.Parent:FindFirstChild("Humanoid")
+				if Humanoid then
+					local character = Humanoid.Parent
+					local Enemy = PlayerService:GetPlayerFromCharacter(character)
+					if table.find(hittedplayers, Enemy) or Enemy.Team == Teams.Nextbots then
+						continue
+					end
+					table.insert(hittedplayers, Enemy)
+					Humanoid.Health = 0
 				end
-				table.insert(hittedplayers, Enemy)
-				Humanoid.Health = 0
 			end
 		end
-
-		Indicator:PivotTo(CFrame.lookAt(root.Position, RayCast.Normal))
+		task.wait(0.1)
 	end
 end
 

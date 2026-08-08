@@ -1,20 +1,39 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local Teams = game:GetService("Teams")
+local Workspace = game:GetService("Workspace")
 local gameprocess = {}
 gameprocess.players = {} --Players here because i cant find this variable all  the time
 local Nextbots = {}
 local Survival = {}
 local Nextbotplayer = require(ServerStorage.Rojo_Scripts.Nextbots.Nextbotplayer)
+local PlayerData = require(ServerStorage.Rojo_Scripts.Playeradded.PlayerData)
 local KillTracker = require(script.Parent.KillTracker)
 local SurvivorNextbotAlive = require(script.Parent.SurvivorNextbotAlive)
-
+local Maps = game.ReplicatedStorage.Maps
+local GameEndsIn = 800
+--local OldMap  ="none"
+local GameStartingInSeconds = 99 --if bigger then 15 then it means they are still waiting -if 0 That means The Game Started
 gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
 	repeat
 		task.wait(1)
-	until #gameprocess.players > 3
+		print(gameprocess.players)
+	until #gameprocess.players > 1
+	ReplicatedStorage.Event.CanGameStart:FireAllClients(true, 15)
 
-	print("enough players")
-	task.wait(10)
+	for i = 15, 0, -1 do
+		GameStartingInSeconds = i
+		if #gameprocess.players < 1 then
+			ReplicatedStorage.Event.CanGameStart:FireAllClients(false)
+			task.spawn(function()
+				gameprocess.wait_for_game()
+			end)
+			return
+		end
+		task.wait(1)
+	end
+	GameStartingInSeconds = 99
 	gameprocess.Startgame()
 end
 function gameprocess.activate()
@@ -30,9 +49,8 @@ function gameprocess.gameend()
 	for _, player: Player in game.Players:GetChildren() do
 		player.Team = game.Teams.lobby
 	end
-	task.wait(3)
+	task.wait(10)
 	for _, player in Nextbots do
-		player.Character.Rojo_Scripts.othermovment.Enabled = true
 		player.Character:FindFirstChild("Humanoid").Health = 0
 	end
 
@@ -55,78 +73,128 @@ function gameprocess.makeplayerinv(player)
 		end
 	end
 end
+function gameprocess.TeleportPlayers()
+	local SpawnLocations = Workspace:FindFirstChild("Map").Spawns:GetChildren()
+	local NextbotSpawnLocations = Workspace:FindFirstChild("Map").NextbotSpawn:GetChildren()
+	for _, Survivor in Survival do
+		local PlayerCharacter = Survivor.Character
+		local RandomSpawnIndex = math.random(1, #SpawnLocations)
+		local RandomSpawn = SpawnLocations[RandomSpawnIndex]
+		table.remove(SpawnLocations, RandomSpawnIndex)
+		PlayerCharacter:PivotTo(RandomSpawn.Value)
+	end
+	for _, Nextbot in Nextbots do
+		local PlayerCharacter = Nextbot.Character
+		if not PlayerCharacter then
+			continue
+		end
+		local RandomSpawnIndex = math.random(1, #NextbotSpawnLocations)
+		local RandomSpawn = NextbotSpawnLocations[RandomSpawnIndex]
+		table.remove(NextbotSpawnLocations, RandomSpawnIndex)
+		PlayerCharacter:PivotTo(RandomSpawn.Value)
+	end
+
+	task.delay(1, function()
+		task.spawn(function()
+			KillTracker.StartKilling(Nextbots)
+		end)
+	end)
+end
 function gameprocess.Startgame()
+	while true do
+		local OriginalPostion: Vector3 = Maps.OriginalPosition.Value
+		local MapArray = Maps:GetChildren()
+		local index = math.random(1, #MapArray)
+
+		if MapArray[index]:IsA("Model") then -- and MapArray[index].Name ~= OldMap then
+			local SelectedMap: Model = MapArray[index]:Clone()
+			SelectedMap.Name = "Map"
+			SelectedMap:PivotTo(CFrame.new(OriginalPostion.X, OriginalPostion.Y, OriginalPostion.Z))
+			SelectedMap.Parent = game.Workspace
+			--OldMap =MapArray[index].Name
+			break
+		end
+	end
 	gameprocess.gamerunning = true
-	local pickableplayers = table.clone(gameprocess.players)
+	local pickableplayers = {}
+	for _, player in gameprocess.players do
+		if player.Character then
+			table.insert(pickableplayers, player)
+		end
+	end
 
 	print(pickableplayers)
 	for i = 1, 1, 1 do --1 , math.floor(#pickableplayers/2),  do
 		print(i)
 		local mathrandom = math.random(1, #pickableplayers)
-		local player: Player = pickableplayers[mathrandom]
+		local player = pickableplayers[mathrandom]
 		print(player)
 		player.Team = game.Teams.Nextbots
-		local PlayerGui = player.PlayerGui
-		PlayerGui:FindFirstChild("Emote").EmoteScript.Enabled = false
 		gameprocess.makeplayerinv(player)
-
 		table.insert(Nextbots, player)
 		table.remove(pickableplayers, mathrandom)
-		local Character = player.Character
-		Character.Rojo_Scripts:FindFirstChild("othermovment").Enabled = false
-		game.ReplicatedStorage.localnextbotevents.ResetCamerOffset:FireClient(player)
-		Nextbotplayer.addplayer(player, "Sanic") --test code because i still dont have a save system
-		game.ReplicatedStorage.playeranimation.disableanimation:FireClient(player)
+		Nextbotplayer.addplayer(player, PlayerData[player.UserId].NextbotEquiped) --test code because i still dont have a save system
 	end
-
-	task.spawn(function()
-		KillTracker.StartKilling(Nextbots)
-	end)
-
-	game.ReplicatedStorage.Start:Fire()
-	print(pickableplayers)
 	for _, player: Player in pickableplayers do
 		player.Team = game.Teams.Survivor
 	end
 	Survival = table.clone(pickableplayers)
 	SurvivorNextbotAlive.SetNextbot(Nextbots)
 	SurvivorNextbotAlive.SetSurvivor(Survival)
+
+	gameprocess.TeleportPlayers()
+	ReplicatedStorage.Event.GameStarted:FireAllClients(300)
+
+	game.ReplicatedStorage.Start:Fire()
+end
+function gameprocess.addplayer(player: Player)
+	local Character = player.Character or player.CharacterAdded:Wait()
+	local Root = Character:WaitForChild("HumanoidRootPart")
+	if Character and Root then
+		table.insert(gameprocess.players, player)
+		if GameStartingInSeconds > 15 then
+			ReplicatedStorage.Event.CanGameStart:FireClient(player, false)
+		elseif GameStartingInSeconds > 0 then
+			ReplicatedStorage.Event.CanGameStart:FireClient(player, true, GameStartingInSeconds)
+		elseif GameEndsIn > 0 then
+			ReplicatedStorage.Event.GameStarted:FireClient(player, GameEndsIn)
+		end
+	end
 end
 
-function gameprocess.addplayer(player: Player)
-	player.Team = game.Teams.Survivor
-	table.insert(gameprocess.players, player)
-	print(gameprocess.players)
+function gameprocess.GameCountDown()
+	for index = 300, 0, -1 do --300 seconds = 5 min do
+		GameEndsIn = index
+		task.wait(1)
+		if not gameprocess.gamerunning then
+			return
+		end
+	end
+	gameprocess.gameend()
 end
 function gameprocess.removeplayer(player)
 	table.remove(gameprocess.players, table.find(gameprocess.players, player))
 	gameprocess.playerdied(player)
 end
 function gameprocess.playerdied(player: Player)
-	print("doesthefubnction even run")
-	print("Survivors", Survival)
 	if not gameprocess.gamerunning then
 		return
 	end
-
-	for i, value in Survival do
-		if value == player then
-			table.remove(Survival, i)
-			break
-		end
+	player.Team = Teams.lobby
+	local SurvivorIndex = table.find(Survival, player)
+	if SurvivorIndex then
+		table.remove(Survival, SurvivorIndex)
+		SurvivorNextbotAlive.RemoveSurvivor(SurvivorIndex)
 	end
-	for i, value in Nextbots do
-		if value == player then
-			table.remove(Nextbots, i)
-			break
-		end
+	local NextBotIndex = table.find(Nextbots, player)
+	if NextBotIndex then
+		table.remove(Nextbots, NextBotIndex)
 	end
 	print(#Survival)
 	print(#Nextbots)
 	if #Survival < 1 or #Nextbots < 1 then
 		print("game_end")
 		gameprocess.gameend()
-		return
 	end
 end
 

@@ -11,7 +11,7 @@ EmoteRequest.OnServerEvent:Connect(function(Player: Player, Emote: string)
 	local Humanoid = Character:FindFirstChild("Humanoid")
 	local Animator = Humanoid:FindFirstChild("Animator")
 	local HumanoidRootPart: Part = Character:FindFirstChild("HumanoidRootPart")
-	if HumanoidRootPart.AssemblyLinearVelocity.Magnitude > 0.2 then
+	if HumanoidRootPart.AssemblyLinearVelocity.Magnitude > 1 then
 		print("Player is not  standing Still ")
 		print(HumanoidRootPart.AssemblyLinearVelocity)
 		return

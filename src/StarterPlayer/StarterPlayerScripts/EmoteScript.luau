@@ -7,6 +7,7 @@ local ScreeGui = Player.PlayerGui:WaitForChild("Emote")
 local UiGradiant: UIGradient = ScreeGui.Frame.EmoteWheel.UIGradient
 local InputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Teams = game:GetService("Teams")
 local Connection
 local Input: InputAction = Player:WaitForChild("CustomInputs"):WaitForChild("Emote"):WaitForChild("Emote")
 local TweenService = game:GetService("TweenService")
@@ -20,12 +21,17 @@ local EmoteChoose = 0
 local RigFolder = RootFrame:WaitForChild("ViewportFrame"):WaitForChild("Rigs")
 local oldstate = false
 local RequestEmote: RemoteEvent = ReplicatedStorage.Event.RequestEmote
-local function WheelOnOrOFF(boolean: boolean)
+function module.WheelOnOrOFF(boolean: boolean)
+	if Player.Team == Teams.Nextbots then
+		if Connection then
+			Connection:Disconnect()
+		end
+	end
 	local WheelTweenProperties
 	if boolean then
-		WheelTweenProperties = { Size = UDim2.new(0.7, 0, 0.7, 0) }
+		WheelTweenProperties = { Size = UDim2.fromScale(0.7, 0.7) }
 	else
-		WheelTweenProperties = { Size = UDim2.new(0, 0, 0, 0) }
+		WheelTweenProperties = { Size = UDim2.fromScale(0, 0) }
 	end
 	local wheelTween = TweenService:Create(RootFrame, WheelTweenInfo, WheelTweenProperties)
 	wheelTween:Play()
@@ -35,7 +41,9 @@ Input.StateChanged:Connect(function(bool: boolean)
 	print(bool)
 	print("ChangedState", Input:GetState())
 	if bool then
-		WheelOnOrOFF(true)
+		if Player.Team == Teams.Nextbots then
+			return
+		end
 		for i = 1, 4, 1 do
 			local key = tostring(i)
 			print(ClientData.Data)
@@ -85,8 +93,12 @@ Input.StateChanged:Connect(function(bool: boolean)
 				tween:Play()
 			end
 		end)
+		module.WheelOnOrOFF(true)
 	else
 		if Connection then
+			if Player.Team == Teams.Nextbots then
+				return
+			end
 			Connection:Disconnect()
 			print("HALLO WERDE ICH GERADE GESTARTEt")
 			Connection = nil
@@ -96,7 +108,7 @@ Input.StateChanged:Connect(function(bool: boolean)
 				RequestEmote:FireServer(Emote)
 			end
 			print(EmoteChoose)
-			WheelOnOrOFF(false)
+			module.WheelOnOrOFF(false)
 		end
 	end
 end)

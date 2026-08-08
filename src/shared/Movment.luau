@@ -3,6 +3,7 @@ local ContentProvider = game:GetService("ContentProvider")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local Teams = game:GetService("Teams")
 local SprintAnimation: Animation = ReplicatedStorage.Animations.Sprint.SprintAnimation
 local SlideAnimation: Animation = ReplicatedStorage.Animations.Slide.SlideAnimation
 if RunService:IsClient() then
@@ -25,12 +26,12 @@ function MovmentShared.RunFunction()
 			end
 			local InputsFolder = player:FindFirstChild("CustomInputs")
 			local Humanoid: Humanoid = Character:FindFirstChild("Humanoid")
-			local Animator = Humanoid:FindFirstChild("Animator")
 			raycastparams.FilterDescendantsInstances = { Character }
 			local raycastforfloor = game.Workspace:Raycast(Root.Position, Vector3.new(0, -5, 0), raycastparams)
 
 			if raycastforfloor then
 				if raycastforfloor.Instance:GetAttribute("Pad") then
+					print("JumpadJA")
 					Root.AssemblyLinearVelocity =
 						Vector3.new(Root.AssemblyLinearVelocity.X, 200, Root.AssemblyLinearVelocity.Z)
 				end
@@ -49,6 +50,7 @@ function MovmentShared.RunFunction()
 							or Character:GetAttribute("SlidingPressed")
 							or Humanoid:GetState() == Enum.HumanoidStateType.Freefall
 							or Humanoid:GetState() == Enum.HumanoidStateType.Jumping
+							or (player.Team == Teams.Nextbot and not Character:GetAttribute("Shapeshifting"))
 						then
 							continue
 						end

@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Playeradded = {}
-local movmentstatscript = require(script.Parent.Parent.Movmentstate.Movmentscript)
 local gameProcessScript = require(script.Parent.Parent.gamestartingscripts.gameprocess)
 local DataSave = require(script.Parent.Save)
 local Data = require(script.Parent.PlayerData)
@@ -31,7 +30,7 @@ function Playeradded.activate()
 					object.CollisionGroup = "player"
 				end
 			end)
-			local humanoid: Humanoid = character:FindFirstChild("Humanoid")
+			local humanoid = character:FindFirstChild("Humanoid")
 			humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
 			humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
 			humanoid.Died:Connect(function()
@@ -60,8 +59,10 @@ function Playeradded.activate()
 		DataSave.DeleteData(player)
 		local Playerdata = DataSave.LoadData(player)
 		player.Team = game.Teams.lobby
-		movmentstatscript.addplayer(player)
-		gameProcessScript.addplayer(player)
+		task.spawn(function()
+			gameProcessScript.addplayer(player)
+		end)
+
 		Data.addplayer(player, Playerdata)
 	end)
 
