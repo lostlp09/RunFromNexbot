@@ -23,6 +23,9 @@ local function EnableMobileGui()
 
 	print(SprintBinding.UIButton)
 end
+function module.isOnController()
+	return UserInputService.GamepadEnabled
+end
 function module.activate()
 	if module.isOnMobile() then
 		task.spawn(function()

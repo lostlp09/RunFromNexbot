@@ -12,7 +12,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
 local Teams = game:GetService("Teams")
 local Connection
-local Input: InputAction = Player:WaitForChild("CustomInputs"):WaitForChild("Emote"):WaitForChild("Emote")
+local Input = Player:WaitForChild("CustomInputs"):WaitForChild("Emote"):WaitForChild("Emote")
 local TweenService = game:GetService("TweenService")
 local EmotePlayer = require(ReplicatedStorage.Shared.EmotePlayer.EmotePlayer)
 local MakeJumpButtonVisible = require(script.Parent.MakeJumpButtonVisible)
@@ -22,7 +22,7 @@ local currentValue = 90
 local WheelTweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false)
 local EmoteChoose = 0
 local RigFolder = RootFrame:WaitForChild("ViewportFrame"):WaitForChild("Rigs")
-
+local ControllerInput: InputAction = Input.Parent:FindFirstChild("EmoteWheel")
 local EquipOrMobile = RootFrame.EquipOrMobile
 local RequestEmote: RemoteEvent = ReplicatedStorage.Event.RequestEmote
 local Equiping = false
@@ -104,7 +104,37 @@ function module.StartEmoteOnMobile()
 		end
 	end
 end
+local function ControllerPcActivateEmote(X, Y)
+	local value = (math.deg(math.atan2(Y, X)) + 360) % 360
+	local roundedValue = math.round(value)
+	local valueNew = math.round(roundedValue / 90) * 90
+	local EmoteValue = math.round(roundedValue / 90)
+	if EmoteValue == 0 then
+		EmoteChoose = 4
+	else
+		EmoteChoose = EmoteValue
+	end
+	if valueNew == 360 then
+		valueNew = 0
+	end
+	if currentValue ~= valueNew then
+		local diff = valueNew - currentValue
+		if diff > 180 then
+			diff -= 360
+		elseif diff < -180 then
+			diff += 360
+		end
+		UiGradiant.Rotation = currentValue
+		local Properties = {
+			Rotation = currentValue + diff,
+		}
 
+		currentValue = valueNew
+
+		local tween = TweenService:Create(UiGradiant, Info, Properties)
+		tween:Play()
+	end
+end
 function module.activate()
 	print("EmoteScriptAktiviert")
 	Input.StateChanged:Connect(function(bool: boolean)
@@ -128,41 +158,23 @@ function module.activate()
 				local RigAnimator = RigHumanoid:FindFirstChild("Animator")
 				EmotePlayer.Play(Emote, RigAnimator)
 			end
-			Connection = RunService.RenderStepped:Connect(function()
-				local midpoint = Vector2.new(ScreeGui.AbsoluteSize.X / 2, ScreeGui.AbsoluteSize.Y / 2)
-				local X = midpoint.X - mouse.X
-				local Y = midpoint.Y - mouse.Y
+			if MakeJumpButtonVisible.isOnController() then
+				print("cool")
+				Connection = RunService.RenderStepped:Connect(function()
+					local Vector2 = ControllerInput:GetState()
+					ControllerPcActivateEmote(Vector2.X * -1, Vector2.Y)
+				end)
+			else
+				Connection = RunService.RenderStepped:Connect(function()
+					local midpoint = Vector2.new(ScreeGui.AbsoluteSize.X / 2, ScreeGui.AbsoluteSize.Y / 2)
+					local X = midpoint.X - mouse.X
+					local Y = midpoint.Y - mouse.Y
+					ControllerPcActivateEmote(X, Y)
+				end)
 
-				local value = (math.deg(math.atan2(Y, X)) + 360) % 360
-				local roundedValue = math.round(value)
-				local valueNew = math.round(roundedValue / 90) * 90
-				local EmoteValue = math.round(roundedValue / 90)
-				if EmoteValue == 0 then
-					EmoteChoose = 4
-				else
-					EmoteChoose = EmoteValue
-				end
-				if valueNew == 360 then
-					valueNew = 0
-				end
-				if currentValue ~= valueNew then
-					local diff = valueNew - currentValue
-					if diff > 180 then
-						diff -= 360
-					elseif diff < -180 then
-						diff += 360
-					end
-					UiGradiant.Rotation = currentValue
-					local Properties = {
-						Rotation = currentValue + diff,
-					}
+				print("yo")
+			end
 
-					currentValue = valueNew
-
-					local tween = TweenService:Create(UiGradiant, Info, Properties)
-					tween:Play()
-				end
-			end)
 			module.WheelOnOrOFF(true)
 		else
 			if Connection then
@@ -179,15 +191,6 @@ function module.activate()
 				module.WheelOnOrOFF(false)
 			end
 		end
-	end)
-	function test()
-		while true do
-			print(ClientData.Data)
-			task.wait(1)
-		end
-	end
-	task.spawn(function()
-		test()
 	end)
 end
 
