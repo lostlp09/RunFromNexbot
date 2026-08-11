@@ -15,6 +15,7 @@ local Structure = player.PlayerGui.Rig.ViewportFrame.Structure
 local ViewportFrame = Structure.Parent
 local PurchaseButtonConnection = nil
 local Objects = {}
+
 local GridLayout = game:WaitForChild("StarterGui").ShopUi.Buttonloader.UIGridLayout
 local GamepassShopUi = game.ReplicatedStorage.Ui.GamePassShop
 local MarketPlaceService = game:GetService("MarketplaceService")
@@ -27,6 +28,7 @@ local function Purchase(Itemtype, key, Connection, Instance)
 			ClientData.Data.NextbotOwned[key] = true
 		elseif Itemtype == "Emote" then
 			ClientData.Data.EmoteOwned[key] = true
+			print(ClientData.Data)
 		end
 		Instance.Owned.Visible = true
 		Structure.Equip.Text = "Owned"

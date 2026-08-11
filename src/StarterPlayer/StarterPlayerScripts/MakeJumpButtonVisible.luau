@@ -8,7 +8,7 @@ local SprintButton: ImageButton
 function module.isOnMobile()
 	return UserInputService.TouchEnabled
 end
-if module.isOnMobile() then
+local function EnableMobileGui()
 	local Jumpbutton: ImageButton = player.PlayerGui:WaitForChild("TouchGui").TouchControlFrame.JumpButton
 	Jumpbutton.Visible = true
 	MobileGui = MobileGui:Clone()
@@ -23,6 +23,14 @@ if module.isOnMobile() then
 
 	print(SprintBinding.UIButton)
 end
+function module.activate()
+	if module.isOnMobile() then
+		task.spawn(function()
+			EnableMobileGui()
+		end)
+	end
+end
+
 function module.TurnSprintButton(bool)
 	if SprintButton then
 		SprintButton.Visible = bool

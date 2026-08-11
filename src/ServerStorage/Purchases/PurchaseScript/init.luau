@@ -19,7 +19,18 @@ local ProductPurhcases = {
 		Purchase.CurrencyBought(UserId, 50)
 	end,
 }
-
+function Purchase.activate()
+	MarketPlaceService.PromptProductPurchaseFinished:Connect(function(userId, id, IsPurchased)
+		if IsPurchased then
+			ProductPurhcases[id](userId)
+		end
+	end)
+	ReplicatedStorage.Event.ChangeCharacter.OnServerEvent:Connect(function(player, Key)
+		if PlayerData[player.UserId]["NextbotOwned"] == Key then
+			PlayerData[player.UserId]["NextEquiped"] = Key
+		end
+	end)
+end
 function Purchase.CurrencyBought(ID: number, amount)
 	print(PlayerData[ID]["Currency"], "amount")
 	PlayerData[ID]["Currency"] += amount
@@ -63,12 +74,10 @@ game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(p
 			print("Player does not have enough Money or he Owns already")
 			return false
 		end
+	else
+		print("Something went wrong")
+		return false
 	end
 end
-MarketPlaceService.PromptProductPurchaseFinished:Connect(function(userId, id, IsPurchased)
-	if IsPurchased then
-		ProductPurhcases[id](userId)
-	end
-end)
 
 return Purchase

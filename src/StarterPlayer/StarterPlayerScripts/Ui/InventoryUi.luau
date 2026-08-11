@@ -1,9 +1,14 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterPlayer = game:GetService("StarterPlayer")
 local InventoryUi = {}
 local player = game.Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 local Inventory = PlayerGui:WaitForChild("inventory")
+local EmoteScript = require(Players.LocalPlayer.PlayerScripts.Rojo_Scripts.EmoteScript)
+local EmotePlayer = require(ReplicatedStorage.Shared.EmotePlayer.EmotePlayer)
 local ClientData = require(script.Parent.Parent.ClientData)
+print("EmoteScript ClientData:", ClientData, tostring(ClientData):match("0x%x+"))
 local NextBotUiInfo = require(script.Parent.NextbotUiInfo)
 local ButtonConnection = {}
 local ALlFrames = {}
@@ -13,8 +18,9 @@ local RigAnimator = require(script.Parent.RigUI)
 local NextbotModel = ViewportFrame.WorldModel.Nextbot
 local EmoteInfo = require(script.Parent.EmoteInfo)
 local RigUI = require(script.Parent.RigUI)
+local ShopUi = require(script.Parent.ShopUi)
 local EmoteButton = Inventory:WaitForChild("Categorybar").Emotes
-local NextBotButton = Inventory.Categorybar.Emotes
+local NextBotButton = Inventory.Categorybar.Character
 local Structure = ViewportFrame.Structure
 local InventoryPresets = ReplicatedStorage.Ui:WaitForChild("InventoryPresets")
 local function ClearConnections(Array)
@@ -26,10 +32,12 @@ local function ClearConnections(Array)
 end
 
 function InventoryUi.activate()
-	EmoteButton.MouseButton1Up:Connect(function()
+	print("wie oft")
+	EmoteButton.Activated:Connect(function()
 		InventoryUi.LoadEmotes()
 	end)
-	NextBotButton.MouseButton1Up:Connect(function()
+	NextBotButton.Activated:Connect(function()
+		print("Führesaus")
 		InventoryUi.LoadCharacters()
 	end)
 end
@@ -51,9 +59,11 @@ function InventoryUi.ChangeVisibility()
 	end
 end
 function InventoryUi.LoadCharacters()
+	print("Werde ich ausgeführt")
 	DeleteEverying()
 	RigAnimator.RigInVisible()
 	for key, obtained in pairs(ClientData.Data["NextbotOwned"]) do
+		print("Wird die schleife ausgeführt")
 		if obtained then
 			local UiFrame = InventoryPresets.NextbotSelect:Clone()
 			local Button: TextButton = UiFrame.Button
@@ -74,23 +84,21 @@ end
 function InventoryUi.LoadEmotes()
 	DeleteEverying()
 	for key, obtained in pairs(ClientData.Data["EmoteOwned"]) do
-		print(key)
 		if obtained then
 			local UiFrame = game.ReplicatedStorage.Ui.InventoryPresets.EmoteSelect:Clone()
+			UiFrame.Parent = Inventory.Buttonloader
 			local Button: TextButton = UiFrame.Button
-			local Icon = UiFrame.Icon
-			print(key)
-			Icon.Image = EmoteInfo[key]["Icon"]
-			Icon.Text.Text = key
-			UiFrame.Name = key
+			UiFrame.Text.Text = key
 			local Connection
-			Connection = Button.MouseButton1Up:Connect(function()
+			local Animator = UiFrame.ViewportFrame.WorldModel.R6.Humanoid.Animator
+			print(key)
+			EmotePlayer.Play(key, Animator)
+			Connection = Button.Activated:Connect(function()
 				print("cool")
 				InventoryUi.EmoteMoreDetailed(key)
 			end)
 			table.insert(ALlFrames, UiFrame)
 			table.insert(ButtonConnection, Connection)
-			UiFrame.Parent = Inventory.ScrollingFrame
 		end
 	end
 end
@@ -101,18 +109,21 @@ function InventoryUi.UpdateMoreDetailed(CharacterName, Image)
 	local Abilitybutton2 = ViewportFrame.Structure.Ability2
 	local EquipButton = ViewportFrame.Structure.Equip
 	ViewportFrame.Visible = true
+	local Connection
 	print(ClientData.Data["NextbotEquiped"], CharacterName)
 	if ClientData.Data["NextbotEquiped"] == CharacterName then
 		EquipButton.Text = "Equiped"
 	else
-		local Connection
 		Connection = EquipButton.Activated:Connect(function()
 			ReplicatedStorage.Event.ChangeCharacter:FireServer(CharacterName)
 			Connection:Disconnect()
 			EquipButton.Text = "Equiped"
+			ClientData.Data["NextbotEquiped"] = CharacterName
 		end)
 		EquipButton.Text = "Equip"
+		table.insert(Connections, Connection)
 	end
+
 	RigUI.RigInVisible()
 	NextbotModel.Decal.Texture = "rbxassetid://" .. tostring(Image)
 	Description.Text = NextBotUiInfo[CharacterName]["Description"]
@@ -122,12 +133,22 @@ function InventoryUi.UpdateMoreDetailed(CharacterName, Image)
 	end
 end
 function InventoryUi.EmoteMoreDetailed(EmoteName)
+	ClearConnections(Connections)
+
 	RigAnimator.RigVisible()
 	ViewportFrame.Visible = true
 	RigAnimator.AbilityButtonToggle(false)
-	ClearConnections(Connections)
 	Structure.TextLabel.Text = EmoteInfo[EmoteName]["Description"]
-	RigAnimator.playAnimation(EmoteInfo[EmoteName]["Emote"])
+	EmotePlayer.Play(EmoteName, RigUI.ReturnAnimator())
+	Structure.Equip.Text = "Equip"
+	local Connection
+	Connection = Structure.Equip.Activated:Connect(function()
+		Inventory.Enabled = false
+
+		print(ClientData.Data)
+		EmoteScript.ChangeEmote(EmoteName)
+	end)
+	table.insert(Connections, Connection)
 end
 function InventoryUi.Disable()
 	print("DisablePLs")

@@ -5,7 +5,7 @@ local Startertable = {
 	["NextbotEquiped"] = "Royal",
 	["NextbotOwned"] = { ["Royal"] = true, ["Sanic"] = false, ["Pork"] = false },
 	["EmoteOwned"] = { ["Crazy"] = false, ["Shuffle"] = false, ["Chill"] = false },
-	["EmoteEquiped"] = { ["1"] = false, ["2"] = false, ["3"] = false, ["4"] = false },
+	["EmoteEquiped"] = { ["1"] = "Chill", ["2"] = false, ["3"] = false, ["4"] = false },
 	["Currency"] = 1000,
 }
 
@@ -48,6 +48,7 @@ function PlayerData.addplayer(player: Player, Data)
 	end
 	Saveclass.SaveData(player, PlayerData[player.UserId])
 	print(PlayerData[player.UserId])
+	print("ich  sende deine playerdata")
 	game.ReplicatedStorage.ClientData.GiveClientData:FireClient(player, PlayerData[player.UserId])
 end
 return PlayerData
