@@ -9,6 +9,10 @@ local Animator: Animator = characterhumanoid:FindFirstChild("Animator")
 local AnimationObject: Animation = characterhumanoid.Parent.Emote
 local Structure = RiGscreen.ViewportFrame.Structure
 local animation
+
+function RigUi.ReturnAnimator()
+	return Animator
+end
 function RigUi.playAnimation(id)
 	if animation then
 		animation:Stop()
@@ -21,7 +25,6 @@ function RigUi.playAnimation(id)
 end
 
 function RigUi.RigVisible()
-	NexbotModel.Transparency = 1
 	NexbotModel.Decal.Transparency = 1
 	for _, part in Rig:GetDescendants() do
 		if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
@@ -31,7 +34,6 @@ function RigUi.RigVisible()
 end
 function RigUi.RigInVisible()
 	print(NexbotModel)
-	NexbotModel.Transparency = 0
 	NexbotModel.Decal.Transparency = 0
 	for _, part in Rig:GetDescendants() do
 		if part:IsA("BasePart") then
@@ -48,12 +50,11 @@ end
 
 function RigUi.NextbotTexture(Texture)
 	print(Texture)
-	NexbotModel.Decal.Texture = Texture
+	NexbotModel.Decal.Texture = "rbxassetid://" .. tostring(Texture)
 end
 
 function RigUi.AbilityButtonToggle(boolean)
 	Structure.Ability1.Visible = boolean
 	Structure.Ability2.Visible = boolean
-	Structure.Ability3.Visible = boolean
 end
 return RigUi

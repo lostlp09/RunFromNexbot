@@ -1,25 +1,7 @@
 local Emote = {
-	Worm = 100,
-	Griddy = 200,
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	Crazy = 100,
+	Chill = 400,
+	Shuffle = 1000,
 }
-	
 
 return Emote

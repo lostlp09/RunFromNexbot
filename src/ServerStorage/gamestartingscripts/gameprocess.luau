@@ -18,7 +18,7 @@ gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
 	repeat
 		task.wait(1)
-		print(gameprocess.players)
+
 	until #gameprocess.players > 1
 	ReplicatedStorage.Event.CanGameStart:FireAllClients(true, 15)
 

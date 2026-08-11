@@ -24,6 +24,8 @@ if module.isOnMobile() then
 	print(SprintBinding.UIButton)
 end
 function module.TurnSprintButton(bool)
-	SprintButton.Visible = bool
+	if SprintButton then
+		SprintButton.Visible = bool
+	end
 end
 return module

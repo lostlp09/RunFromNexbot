@@ -50,7 +50,7 @@ function MovmentShared.RunFunction()
 							or Character:GetAttribute("SlidingPressed")
 							or Humanoid:GetState() == Enum.HumanoidStateType.Freefall
 							or Humanoid:GetState() == Enum.HumanoidStateType.Jumping
-							or (player.Team == Teams.Nextbot and not Character:GetAttribute("Shapeshifting"))
+							or (player.Team == Teams.Nextbots and not Character:GetAttribute("Shapeshifting"))
 						then
 							continue
 						end

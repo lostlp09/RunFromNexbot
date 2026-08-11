@@ -1,16 +1,24 @@
-local EmoteUi = 
-{
-	Griddy = {
+local EmoteUi = {
+	Crazy = {
 		Icon = "",
-		Description = "A Cool Emote which is very good and Toxic ",
+		Description = "Crazy Whattttttttttt",
 		Emote = "rbxassetid://115296259272537",
-		Name = "Griddy",
+		Name = "Crazy",
+		Price = 200,
 	},
-	Worm = {
+	Chill = {
 		Icon = "",
-		Description = "A Cool Emote which is very good and Toxic ",
+		Description = "Chill Guy :)",
 		Emote = "rbxassetid://115296259272537",
-		Name = "Iambad",
+		Name = "Chill",
+		Price = 400,
+	},
+	Shuffle = {
+		Icon = "",
+		Description = "Show your moves",
+		Emote = "rbxassetid://115296259272537",
+		Name = "Shuffle",
+		Price = 1000,
 	},
 }
 

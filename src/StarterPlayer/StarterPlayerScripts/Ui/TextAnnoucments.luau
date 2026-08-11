@@ -51,7 +51,6 @@ function module.LoadingText(TextObject: TextLabel)
 	end)
 	while AllowToloop do
 		task.wait(1)
-		print("Loop")
 		index += 1
 		if index > 3 then
 			index = 0

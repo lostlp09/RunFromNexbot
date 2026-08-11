@@ -2,7 +2,7 @@ local Shop = {}
 local ClientData = require(script.Parent.Parent.ClientData)
 local NextBotUiInfo = require(script.Parent.NextbotUiInfo)
 local EmoteUiInfo = require(script.Parent.EmoteInfo)
-local NextbotFrame = game.ReplicatedStorage.Ui:FindFirstChild("InventoryPresets"):FindFirstChild("Nexbotselect")
+local NextbotFrame = game.ReplicatedStorage.Ui:FindFirstChild("InventoryPresets"):FindFirstChild("NextbotSelect")
 local EmoteFrame = game.ReplicatedStorage.Ui:FindFirstChild("InventoryPresets").EmoteSelect
 local ShopScreenUi = game.Players.LocalPlayer.PlayerGui.ShopUi
 local ScrollFrame = ShopScreenUi.Buttonloader
@@ -18,13 +18,9 @@ local Objects = {}
 local GridLayout = game:WaitForChild("StarterGui").ShopUi.Buttonloader.UIGridLayout
 local GamepassShopUi = game.ReplicatedStorage.Ui.GamePassShop
 local MarketPlaceService = game:GetService("MarketplaceService")
-function Shop.DisableUi()
-	Shop.DeleteAllObjects()
-	ShopScreenUi.Enabled = false
-	RigUI.DisableViewPort()
-end
-
-local function Purchase(Itemtype, key, Connection)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local EmotePlayer = require(ReplicatedStorage.Shared.EmotePlayer.EmotePlayer)
+local function Purchase(Itemtype, key, Connection, Instance)
 	local AllowedToBuy = game.ReplicatedStorage.Event.RemoteFunction.Purchase:InvokeServer(Itemtype, key)
 	if AllowedToBuy then
 		if Itemtype == "Character" then
@@ -32,41 +28,47 @@ local function Purchase(Itemtype, key, Connection)
 		elseif Itemtype == "Emote" then
 			ClientData.Data.EmoteOwned[key] = true
 		end
-
+		Instance.Owned.Visible = true
 		Structure.Equip.Text = "Owned"
 		Connection:Disconnect()
-		print("purchase Worked")
 		PurchaseButtonConnection:Disconnect()
 	else
-		print("Purchase failed")
+		print("_")
 	end
 end
-local function OpenmoreDetailed(What, Key, Connection)
+local function OpenmoreDetailed(What, Key, Connection, Instance)
 	if PurchaseButtonConnection then
 		PurchaseButtonConnection:Disconnect()
 	end
 	PurchaseButtonConnection = Structure.Equip.MouseButton1Up:Connect(function()
-		Purchase(What, Key, Connection)
+		Purchase(What, Key, Connection, Instance)
 	end)
 	RigUI.EnableViewPort()
 	if What == "Character" then
 		RigUI.RigInVisible()
-		print("Viewport Enabled")
 		RigUI.AbilityButtonToggle(true)
 		Structure.Ability1.Image = NextBotUiInfo[Key]["AbilityIcons"][1]
 		Structure.Ability2.Image = NextBotUiInfo[Key]["AbilityIcons"][2]
-		Structure.Ability3.Image = NextBotUiInfo[Key]["AbilityIcons"][3]
+		if NextBotUiInfo[Key]["AbilityIcons"][3] then
+			Structure.Ability3.Image = NextBotUiInfo[Key]["AbilityIcons"][3]
+		end
 		Structure.Equip.Text = "Buy"
 		Structure.TextLabel.Text = NextBotUiInfo[Key]["Description"]
-		Structure.PriceTag.Text = tostring(NextBotUiInfo[Key]["CoinPrice"])
-		RigUI.NextbotTexture(NextBotUiInfo[Key]["Icon"])
+		Structure.PriceTag.Text = tostring(NextBotUiInfo[Key]["CoinPrice"]) .. " Tokens"
+		RigUI.NextbotTexture(NextBotUiInfo[Key].Icon)
 	elseif What == "Emote" then
-		RigUI.playAnimation(EmoteUiInfo[Key].Emote)
+		EmotePlayer.Play(Key, RigUI.ReturnAnimator())
 		RigUI.RigVisible()
+		Structure.PriceTag.Text = tostring(EmoteUiInfo[Key].Price) .. " Tokens"
 		Structure.Equip.Text = "Buy"
+		Structure.TextLabel.Text = EmoteUiInfo[Key].Description
 	end
 end
-
+function Shop.DisableUi()
+	Shop.DeleteAllObjects()
+	ShopScreenUi.Enabled = false
+	RigUI.DisableViewPort()
+end
 function Shop.LoadCharacters()
 	if not ClientData.Data then
 		return
@@ -75,58 +77,47 @@ function Shop.LoadCharacters()
 	Shop.DeleteAllObjects()
 	for key, value in NextBotUiInfo do
 		local Clone = NextbotFrame:Clone()
-		Clone.Icon.Text.Text = key
+		Clone.Text.Text = key
+		Clone.Icon.Image = "rbxassetid://" .. tostring(NextBotUiInfo[key].Icon)
 		Clone.Parent = ScrollFrame
 		table.insert(Objects, Clone)
-		print(ClientData.Data)
+		print(key, ClientData.Data["NextbotOwned"])
 		if ClientData.Data["NextbotOwned"][key] then
-			print("owned")
-			---make already pruchased thing here
+			Clone.Owned.Visible = true
+			print("It worked")
 		else
 			local Connection
 			Connection = Clone:FindFirstChild("Button").MouseButton1Up:Connect(function()
-				OpenmoreDetailed("Character", key, Connection)
+				print("ICH WURDE GEDRÜCKt")
+				OpenmoreDetailed("Character", key, Connection, Clone)
 				table.insert(ButtonConnections, Connection)
 			end)
 		end
 	end
 end
-local State = {
-	["Character"] = Shop.LoadCharacters,
-	["Emote"] = Shop.LoadEmotes,
-	["GamePassShop"] = Shop.LoadRobuxShop,
-}
-function Shop.ChangeVisiblity()
-	local isOn = ShopScreenUi.Enabled
-	if isOn then
-		Shop.DisableUi()
-	else
-		print("State")
-		ViewportFrame.Visible = false
-		Structure.PriceTag.Visible = true
-		ShopScreenUi.Enabled = not isOn
-		print(CurrentOpen)
-		State[CurrentOpen]()
-	end
-end
+
 function Shop.LoadEmotes()
 	if not ClientData.Data then
 		return
 	end
+	print("Emotes are loading")
 	Shop.DeleteAllObjects()
 	RigUI.AbilityButtonToggle(false)
-	for key, value in EmoteUiInfo do
+	for key, _ in EmoteUiInfo do
 		local Clone = EmoteFrame:Clone()
 		Clone.Parent = ScrollFrame
 		table.insert(Objects, Clone)
-		Clone.Icon.Text.Text = key
+		Clone.Text.Text = key
+		local Animator = Clone.ViewportFrame.WorldModel.R6.Humanoid.Animator
+
+		EmotePlayer.Play(key, Animator)
 		if ClientData.Data["EmoteOwned"][key] then
-			print("owned")
+			Clone.Owned.Visible = true
 			---make already pruchased thing here
 		else
 			local Connection
 			Connection = Clone:FindFirstChild("Button").MouseButton1Up:Connect(function()
-				OpenmoreDetailed("Emote", key, Connection)
+				OpenmoreDetailed("Emote", key, Connection, Clone)
 				table.insert(ButtonConnections, Connection)
 			end)
 		end
@@ -137,27 +128,57 @@ function Shop.LoadRobuxShop()
 	Shop.DeleteAllObjects()
 	local Ui = GamepassShopUi:Clone()
 	Ui.Parent = ScrollFrame
+
 	if not ClientData.Data then
 		return
 	end
 	CurrentOpen = "GamePassShop"
-
+	table.insert(Objects, Ui)
 	for _, value in Ui.NormalItems:GetChildren() do
 		if not value:IsA("Frame") then
 			continue
 		end
 		local Id = value.Id.Value
-		print(Id)
-		local Info = MarketPlaceService:GetProductInfoAsync(Id, Enum.InfoType.Product)
-		print(Id)
-		print(Info)
-		value.Price.Text = tostring(Info["PriceInRobux"])
-		print(value:GetChildren())
-		Structure.TextLabel.Text = Info["Name"]
-		value:FindFirstChild("Button").MouseButton1Up:Connect(function()
+		task.spawn(function()
+			local Info = MarketPlaceService:GetProductInfoAsync(Id, Enum.InfoType.Product)
+			value.Price.Text = "\u{E002}" .. tostring(Info["PriceInRobux"])
+		end)
+
+		local Connection
+		Connection = value:FindFirstChild("Button").MouseButton1Up:Connect(function()
 			Shop.PurchaseItem(value.Id.Value)
+			table.insert(ButtonConnections, Connection)
 		end)
 	end
+end
+
+local State = {
+	["Character"] = Shop.LoadCharacters,
+	["Emote"] = Shop.LoadEmotes,
+	["GamePassShop"] = Shop.LoadRobuxShop,
+}
+function Shop.ChangeVisiblity()
+	local isOn = ShopScreenUi.Enabled
+	if isOn then
+		Shop.DisableUi()
+	else
+		ViewportFrame.Visible = false
+		Structure.PriceTag.Visible = true
+		ShopScreenUi.Enabled = not isOn
+		State[CurrentOpen]()
+	end
+end
+function Shop.activate()
+	player.PlayerGui.ShopUi.Categorybar.Character.MouseButton1Down:Connect(function()
+		Shop.LoadCharacters()
+	end)
+	player.PlayerGui.ShopUi.Categorybar.Emotes.MouseButton1Up:Connect(function()
+		print("Connection wurde ausgeführt")
+		Shop.LoadEmotes()
+	end)
+	player.PlayerGui.ShopUi.Categorybar.Coins.MouseButton1Up:Connect(function()
+		Shop.LoadRobuxShop()
+	end)
 end
 
 function Shop.PurchaseItem(Id)
@@ -174,34 +195,5 @@ function Shop.DeleteAllObjects()
 		PurchaseButtonConnection:Disconnect()
 	end
 end
-
-player.PlayerGui.ShopUi.Categorybar.CharacterFrame.Button.MouseButton1Down:Connect(function()
-	Shop.LoadCharacters()
-	local Grid = ScrollFrame:FindFirstChild("UIGridLayout")
-	if not Grid then
-		local OldShop = ScrollFrame:FindFirstChild("GamePassShop")
-		OldShop:Destroy()
-		local Clone = GridLayout:Clone()
-		Clone.Parent = ScrollFrame
-	end
-end)
-player.PlayerGui.ShopUi.Categorybar.EmoteFrame.Button.MouseButton1Up:Connect(function()
-	Shop.LoadEmotes()
-	local Grid = ScrollFrame:FindFirstChild("UIGridLayout")
-	if not Grid then
-		local OldShop = ScrollFrame:FindFirstChild("GamePassShop")
-		OldShop:Destroy()
-		local Clone = GridLayout:Clone()
-		Clone.Parent = ScrollFrame
-	end
-end)
-player.PlayerGui.ShopUi.Categorybar.RobuxShop.Button.MouseButton1Up:Connect(function()
-	print("ShopButton")
-	Shop.LoadRobuxShop()
-	local Grid = ScrollFrame:FindFirstChild("UIGridLayout")
-	if Grid then
-		Grid:Destroy()
-	end
-end)
 
 return Shop

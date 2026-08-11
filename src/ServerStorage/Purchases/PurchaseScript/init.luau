@@ -5,10 +5,18 @@ local EmotePrices = require(script.EmotePrice)
 local PlayerData = require(ServerStorage.Rojo_Scripts.Playeradded.PlayerData)
 local SaveData = require(ServerStorage.Rojo_Scripts.Playeradded.Save)
 local MarketPlaceService = game:GetService("MarketplaceService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ProductPurhcases = {
 
-	[3608157385] = function(x)
-		Purchase.CurrencyBought(x, 100)
+	[3608157385] = function(UserId)
+		Purchase.CurrencyBought(UserId, 500)
+	end,
+	[3703384846] = function(UserId)
+		Purchase.CurrencyBought(UserId, 100)
+	end,
+	[3703386475] = function(UserId)
+		Purchase.CurrencyBought(UserId, 50)
 	end,
 }
 
@@ -16,6 +24,9 @@ function Purchase.CurrencyBought(ID: number, amount)
 	print(PlayerData[ID]["Currency"], "amount")
 	PlayerData[ID]["Currency"] += amount
 	print(PlayerData[ID]["Currency"], "amount")
+	local Player = Players:GetPlayerByUserId(ID)
+	SaveData.SaveData(Player, PlayerData[ID])
+	ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireAllClients(Player, PlayerData[ID]["Currency"])
 end
 game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(player: Player, Itemtype, Key)
 	print("Wirst du ausgefphrt", Itemtype)
