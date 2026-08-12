@@ -5,7 +5,7 @@ local Startertable = {
 	["NextbotEquiped"] = "Royal",
 	["NextbotOwned"] = { ["Royal"] = true, ["Sanic"] = false, ["Pork"] = false },
 	["EmoteOwned"] = { ["Crazy"] = false, ["Shuffle"] = false, ["Chill"] = false },
-	["EmoteEquiped"] = { ["1"] = "Chill", ["2"] = false, ["3"] = false, ["4"] = false },
+	["EmoteEquiped"] = { ["1"] = false, ["2"] = false, ["3"] = false, ["4"] = false },
 	["Currency"] = 1000,
 }
 

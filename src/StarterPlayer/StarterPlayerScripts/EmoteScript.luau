@@ -14,6 +14,7 @@ local Teams = game:GetService("Teams")
 local Connection
 local Input = Player:WaitForChild("CustomInputs"):WaitForChild("Emote"):WaitForChild("Emote")
 local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
 local EmotePlayer = require(ReplicatedStorage.Shared.EmotePlayer.EmotePlayer)
 local MakeJumpButtonVisible = require(script.Parent.MakeJumpButtonVisible)
 local RootFrame = ScreeGui.Frame
@@ -26,6 +27,7 @@ local ControllerInput: InputAction = Input.Parent:FindFirstChild("EmoteWheel")
 local EquipOrMobile = RootFrame.EquipOrMobile
 local RequestEmote: RemoteEvent = ReplicatedStorage.Event.RequestEmote
 local Equiping = false
+local Camera: Camera = Workspace.CurrentCamera
 print("EmoteScript ClientData:", ClientData, tostring(ClientData):match("0x%x+"))
 function module.WheelOnOrOFF(boolean: boolean)
 	print("Wheeeeel")
@@ -138,6 +140,7 @@ end
 function module.activate()
 	print("EmoteScriptAktiviert")
 	Input.StateChanged:Connect(function(bool: boolean)
+		local CameraCFrame = Camera.CFrame
 		if bool then
 			if Player.Team == Teams.Nextbots then
 				return
@@ -158,14 +161,17 @@ function module.activate()
 				local RigAnimator = RigHumanoid:FindFirstChild("Animator")
 				EmotePlayer.Play(Emote, RigAnimator)
 			end
+			Camera.CameraType = Enum.CameraType.Scriptable
 			if MakeJumpButtonVisible.isOnController() then
 				print("cool")
 				Connection = RunService.RenderStepped:Connect(function()
+					Camera.CFrame = CameraCFrame
 					local Vector2 = ControllerInput:GetState()
 					ControllerPcActivateEmote(Vector2.X * -1, Vector2.Y)
 				end)
 			else
 				Connection = RunService.RenderStepped:Connect(function()
+					Camera.CFrame = CameraCFrame
 					local midpoint = Vector2.new(ScreeGui.AbsoluteSize.X / 2, ScreeGui.AbsoluteSize.Y / 2)
 					local X = midpoint.X - mouse.X
 					local Y = midpoint.Y - mouse.Y
@@ -177,6 +183,7 @@ function module.activate()
 
 			module.WheelOnOrOFF(true)
 		else
+			Camera.CameraType = Enum.CameraType.Custom
 			if Connection then
 				if Player.Team == Teams.Nextbots then
 					return

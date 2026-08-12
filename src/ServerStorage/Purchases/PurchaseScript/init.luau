@@ -36,8 +36,10 @@ function Purchase.CurrencyBought(ID: number, amount)
 	PlayerData[ID]["Currency"] += amount
 	print(PlayerData[ID]["Currency"], "amount")
 	local Player = Players:GetPlayerByUserId(ID)
-	SaveData.SaveData(Player, PlayerData[ID])
-	ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireAllClients(Player, PlayerData[ID]["Currency"])
+	task.spawn(function()
+		SaveData.SaveData(Player, PlayerData[ID])
+	end)
+	ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireClient(Player, PlayerData[ID]["Currency"])
 end
 game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(player: Player, Itemtype, Key)
 	print("Wirst du ausgefphrt", Itemtype)
@@ -51,7 +53,10 @@ game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(p
 			print("Player has enough Money Peace")
 			PlayerData[player.UserId]["NextbotOwned"][Key] = true
 			print(PlayerData)
-			SaveData.SaveData(player, PlayerData[player.UserId])
+			task.spawn(function()
+				SaveData.SaveData(player, PlayerData[player.UserId])
+			end)
+
 			return true
 		else
 			print(PlayerData)
@@ -67,7 +72,10 @@ game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(p
 			print("Player has enough Money Peace")
 			PlayerData[player.UserId]["EmoteOwned"][Key] = true
 			print(PlayerData)
-			SaveData.SaveData(player, PlayerData[player.UserId])
+			task.spawn(function()
+				SaveData.SaveData(player, PlayerData[player.UserId])
+			end)
+
 			return true
 		else
 			print(PlayerData)
