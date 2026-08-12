@@ -145,6 +145,10 @@ function module.activate()
 			if Player.Team == Teams.Nextbots then
 				return
 			end
+			if not Player.Character or not Player.Character:FindFirstChild("Humanoid") then
+				return
+			end
+
 			UiGradiant.Enabled = true
 			if Equiping or Player.PlayerGui.ShopUi.Enabled == true or Player.PlayerGui.inventory.Enabled then
 				return
@@ -162,15 +166,37 @@ function module.activate()
 				EmotePlayer.Play(Emote, RigAnimator)
 			end
 			Camera.CameraType = Enum.CameraType.Scriptable
+
+			if Equiping or Player.PlayerGui.ShopUi.Enabled == true or Player.PlayerGui.inventory.Enabled then
+				return
+			end
 			if MakeJumpButtonVisible.isOnController() then
-				print("cool")
 				Connection = RunService.RenderStepped:Connect(function()
+					UiGradiant.Enabled = true
+					if not Player.Character or not Player.Character:FindFirstChild("Humanoid") then
+						Camera.CameraType = Enum.CameraType.Custom
+						Connection:Disconnect()
+					end
+					if Player.Character:FindFirstChild("Humanoid").Health == 0 then
+						Camera.CameraType = Enum.CameraType.Custom
+						Connection:Disconnect()
+					end
+
 					Camera.CFrame = CameraCFrame
 					local Vector2 = ControllerInput:GetState()
 					ControllerPcActivateEmote(Vector2.X * -1, Vector2.Y)
 				end)
 			else
 				Connection = RunService.RenderStepped:Connect(function()
+					if not Player.Character or not Player.Character:FindFirstChild("Humanoid") then
+						Camera.CameraType = Enum.CameraType.Custom
+						Connection:Disconnect()
+					end
+					if Player.Character:FindFirstChild("Humanoid").Health == 0 then
+						Camera.CameraType = Enum.CameraType.Custom
+						Connection:Disconnect()
+					end
+					UiGradiant.Enabled = true
 					Camera.CFrame = CameraCFrame
 					local midpoint = Vector2.new(ScreeGui.AbsoluteSize.X / 2, ScreeGui.AbsoluteSize.Y / 2)
 					local X = midpoint.X - mouse.X
@@ -183,6 +209,7 @@ function module.activate()
 
 			module.WheelOnOrOFF(true)
 		else
+			print("Bring me home")
 			Camera.CameraType = Enum.CameraType.Custom
 			if Connection then
 				if Player.Team == Teams.Nextbots then
@@ -192,7 +219,7 @@ function module.activate()
 
 				Connection = nil
 				local Emote = ClientData.Data.EmoteEquiped[tostring(EmoteChoose)]
-				if Emote then
+				if Emote and Player.Character then
 					RequestEmote:FireServer(Emote)
 				end
 				module.WheelOnOrOFF(false)

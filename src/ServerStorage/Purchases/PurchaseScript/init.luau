@@ -50,6 +50,7 @@ game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(p
 			and PlayerData[player.UserId]["NextbotOwned"][Key] == false
 		then
 			PlayerData[player.UserId]["Currency"] -= NextBotPrices[Key]
+			ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireClient(player, PlayerData[player.UserId]["Currency"])
 			print("Player has enough Money Peace")
 			PlayerData[player.UserId]["NextbotOwned"][Key] = true
 			print(PlayerData)
@@ -72,6 +73,7 @@ game.ReplicatedStorage.Event.RemoteFunction.Purchase.OnServerInvoke = function(p
 			print("Player has enough Money Peace")
 			PlayerData[player.UserId]["EmoteOwned"][Key] = true
 			print(PlayerData)
+			ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireClient(player, PlayerData[player.UserId]["Currency"])
 			task.spawn(function()
 				SaveData.SaveData(player, PlayerData[player.UserId])
 			end)

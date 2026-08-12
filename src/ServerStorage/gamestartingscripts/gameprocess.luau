@@ -178,6 +178,7 @@ function gameprocess.removeplayer(player)
 end
 function gameprocess.playerdied(player: Player)
 	if not gameprocess.gamerunning then
+		print("Yooloo")
 		return
 	end
 	player.Team = Teams.lobby

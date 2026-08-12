@@ -20,7 +20,7 @@ local NextbotUiInfo = {
 
 		Ability = { Ability1 = "PorkCall", Ability2 = "nothing", Ability3 = "nothing" },
 		AbilityIcons = { "rbxassetid://139100209264903", "rbxassetid://80014044533877", false },
-		CoinPrice = 400,
+		CoinPrice = 600,
 	},
 	Sanic = {
 		Icon = "7425201407",

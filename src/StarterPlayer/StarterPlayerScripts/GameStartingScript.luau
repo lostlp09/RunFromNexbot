@@ -13,13 +13,14 @@ local Character = player.Character or player.CharacterAdded:Wait()
 local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
 local LobbyScreenGui = player.PlayerGui:WaitForChild("LobbyGui")
 local CanGameStart = game.ReplicatedStorage.Event:WaitForChild("CanGameStart")
+local GameStarted = false
 print("ICH WURDE REQUIRED")
 function module.GameEnded(DeleteTimer: boolean)
 	if MakeJumpButtonVisible.isOnMobile then
 		MakeJumpButtonVisible.TurnSprintButton(true)
 	end
 	for _, ui in player.PlayerGui:WaitForChild("LobbyGui"):GetChildren() do
-		ui.Visible = false
+		ui.Visible = true
 	end
 	if DeleteTimer then
 		print("Todo")
@@ -27,7 +28,7 @@ function module.GameEnded(DeleteTimer: boolean)
 end
 
 Humanoid.Died:Connect(function()
-	module.GameEnded(false)
+	module.GameEnded(true)
 end)
 
 local function TurnLobbyUi(bool: boolean)
@@ -43,6 +44,7 @@ function module.GameStarting(Time)
 	if player.Team == Teams.lobby then
 		return
 	elseif player.Team == Teams.Nextbots then
+		print("WAS PASSIERT HIER")
 		EmoteScript.WheelOnOrOFF(false)
 		if MakeJumpButtonVisible.isOnMobile() then
 			MakeJumpButtonVisible.TurnSprintButton(false)

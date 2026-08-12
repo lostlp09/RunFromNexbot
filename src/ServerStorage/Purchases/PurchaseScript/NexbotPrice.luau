@@ -1,6 +1,6 @@
 local Nextbot = {
 	Royal = 200,
-	Pork = 500,
+	Pork = 600,
 	Sanic = 400,
 }
 

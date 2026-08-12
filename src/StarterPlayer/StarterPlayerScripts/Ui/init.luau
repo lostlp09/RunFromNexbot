@@ -51,6 +51,6 @@ ShopButton.Activated:Connect(function()
 	print(InventorySreenGUi.Enabled, ShopUi.Enabled)
 end)
 
-ButtonEffectModule:LoadDescendantButtons(LobbyGui)
+ButtonEffectModule:LoadDescendantButtons(LobbyGui.Frame)
 
 return Ui
