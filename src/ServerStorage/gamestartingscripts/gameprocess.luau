@@ -243,8 +243,9 @@ function gameprocess.playerdied(player: Player)
 		table.remove(Nextbots, NextBotIndex)
 		SurvivorNextbotAlive.RemoveNextbot(NextBotIndex)
 	end
-	print(#Survival)
-	print(#Nextbots)
+	print("HowManySurvivorsareLiving")
+	print(Survival)
+	print(Nextbots)
 	if #Survival < 1 or #Nextbots < 1 then
 		print("game_end")
 		gameprocess.gameend()

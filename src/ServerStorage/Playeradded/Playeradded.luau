@@ -12,12 +12,6 @@ function Playeradded.activate()
 		local InputClone = InputFolder:Clone()
 		InputClone.Parent = player
 		player.CharacterAdded:Connect(function(character: Part)
-			if UiUpdatedArray[player.UserId] == nil then
-				print("cool")
-				--local humanoid:Humanoid = player.PlayerGui.Rig.ViewportFrame.WorldModel.R6:FindFirstChild("Humanoid")
-				--humanoid:ApplyDescriptionAsync(PlayerService:GetHumanoidDescriptionFromUserIdAsync(player.UserId))
-				--UiUpdatedArray[player.UserId] = true
-			end
 			for _, object in character:GetDescendants() do
 				if object:IsA("BasePart") then
 					print("load")
@@ -66,7 +60,9 @@ function Playeradded.activate()
 	end)
 
 	game.Players.PlayerRemoving:Connect(function(player)
-		gameProcessScript.removeplayer(player)
+		task.spawn(function()
+			gameProcessScript.removeplayer(player)
+		end)
 	end)
 
 	print("Super ALles Klappt")
