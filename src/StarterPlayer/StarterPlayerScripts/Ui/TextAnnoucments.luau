@@ -14,6 +14,7 @@ function module.CreateText()
 end
 function module.CountDown(TextObject: TextLabel, Time: number, Event)
 	local Connection
+
 	Connection = Event.OnClientEvent:Connect(function(boolean)
 		print("Ich wurde Abgefeuert", Time)
 		if boolean == true or boolean == nil then
@@ -80,6 +81,9 @@ end
 function module:RoundCountdown(Time)
 	if LobbyGui:FindFirstChild("GameCountDown") then
 		return
+	end
+	if LobbyGui:FindFirstChild("GameStartsInCD") then
+		LobbyGui:FindFirstChild("GameStartsInCD").Visible = false
 	end
 	local TextObject = self.CreateText()
 	TextObject.Name = "GameCountDown"

@@ -1,6 +1,7 @@
 local module = {}
 local mouse = game.Players.LocalPlayer:GetMouse()
 local ClientData = require(script.Parent.ClientData)
+local ExperienceAuthService = game:GetService("ExperienceAuthService")
 local FileManagerService = game:GetService("FileManagerService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -28,6 +29,9 @@ local EquipOrMobile = RootFrame.EquipOrMobile
 local RequestEmote: RemoteEvent = ReplicatedStorage.Event.RequestEmote
 local Equiping = false
 local Camera: Camera = Workspace.CurrentCamera
+local ViewportFrame = Player.PlayerGui:WaitForChild("Rig").ViewportFrame
+module.IsInGame = false
+EmoteSelectConnections = {}
 print("EmoteScript ClientData:", ClientData, tostring(ClientData):match("0x%x+"))
 function module.WheelOnOrOFF(boolean: boolean)
 	print("Wheeeeel")
@@ -57,6 +61,15 @@ function module.WheelOnOrOFF(boolean: boolean)
 		WheelTweenProperties = { Size = UDim2.fromScale(0.7, 0.7) }
 	else
 		WheelTweenProperties = { Size = UDim2.fromScale(0, 0) }
+		if Connection then
+			Connection:Disconnect()
+		end
+		if #EmoteSelectConnections > 0 then
+			for _, Connect: RBXScriptConnection in EmoteSelectConnections do
+				Connect:Disconnect()
+			end
+		end
+		Camera.CameraType = Enum.CameraType.Custom
 	end
 
 	local wheelTween = TweenService:Create(RootFrame, WheelTweenInfo, WheelTweenProperties)
@@ -73,23 +86,16 @@ function module.StartEmoteOnMobile()
 	module.WheelOnOrOFF(true)
 	local Connections = {}
 	EquipOrMobile.Visible = true
-	local function DisableConnections()
-		for _, Connection1 in Connections do
-			if Connection1 then
-				Connection1:Disconnect()
-			end
-		end
-	end
+
 	for _, Button: GuiButton in EquipOrMobile:GetChildren() do
 		if Button.Name == "Cancel" then
 			local Con
 			Con = Button.Activated:Connect(function()
 				EquipOrMobile.Visible = false
 
-				DisableConnections()
 				module.WheelOnOrOFF(false)
 			end)
-			table.insert(Connections, Con)
+			table.insert(EmoteSelectConnections, Con)
 		else
 			local Con
 			Con = Button.Activated:Connect(function()
@@ -99,10 +105,9 @@ function module.StartEmoteOnMobile()
 				print(ClientData.Data.EmoteEquiped)
 				local Key = ClientData.Data.EmoteEquiped[Index]
 				RequestEmote:FireServer(Key)
-				DisableConnections()
 				module.WheelOnOrOFF(false)
 			end)
-			table.insert(Connections, Con)
+			table.insert(EmoteSelectConnections, Con)
 		end
 	end
 end
@@ -237,13 +242,7 @@ function module.ChangeEmote(key)
 	module.WheelOnOrOFF(true)
 	local Connections = {}
 	EquipOrMobile.Visible = true
-	local function DisableConnections()
-		for _, Connection1 in Connections do
-			if Connection1 then
-				Connection1:Disconnect()
-			end
-		end
-	end
+
 	for _, Button: GuiButton in EquipOrMobile:GetChildren() do
 		if Button.Name == "Cancel" then
 			local Con
@@ -251,11 +250,13 @@ function module.ChangeEmote(key)
 				EquipOrMobile.Visible = false
 				Equiping = false
 
-				DisableConnections()
-				Player.PlayerGui.inventory.Enabled = true
+				if not module.IsInGame then
+					Player.PlayerGui.inventory.Enabled = true
+					ViewportFrame.Visible = true
+				end
 				module.WheelOnOrOFF(false)
 			end)
-			table.insert(Connections, Con)
+			table.insert(EmoteSelectConnections, Con)
 		else
 			local Con
 			Con = Button.Activated:Connect(function()
@@ -263,12 +264,14 @@ function module.ChangeEmote(key)
 				local Index = Button.Name
 				Equiping = false
 				ClientData.Data.EmoteEquiped[Index] = key
-				print(Button.Name, ClientData.Data.EmoteEquiped)
-				DisableConnections()
-				Player.PlayerGui.inventory.Enabled = true
+				if not module.IsInGame then
+					Player.PlayerGui.inventory.Enabled = true
+					ViewportFrame.Visible = true
+				end
+
 				module.WheelOnOrOFF(false)
 			end)
-			table.insert(Connections, Con)
+			table.insert(EmoteSelectConnections, Con)
 		end
 	end
 end

@@ -27,6 +27,11 @@ end
 function module.activate()
 	ReplicatedStorage.Event:WaitForChild("GameEnded").OnClientEvent:Connect(function()
 		module.GameEnded(true)
+		EmoteScript.IsInGame = false
+	end)
+	ReplicatedStorage.Event:WaitForChild("GameStarted").OnClientEvent:Connect(function(Time)
+		EmoteScript.IsInGame = true
+		module.GameStarting(Time)
 	end)
 end
 function module.GameEnded(DeleteTimer: boolean)
@@ -38,10 +43,12 @@ function module.GameEnded(DeleteTimer: boolean)
 end
 Humanoid.Died:Connect(function()
 	module.GameEnded(false)
+	EmoteScript.IsInGame = false
 end)
 function module.GameStarting(Time)
 	TextAnnoucments:RoundCountdown(Time)
 	TurnLobbyUi(false)
+	EmoteScript.WheelOnOrOFF(false)
 	if player.Team == Teams.lobby then
 		return
 	elseif player.Team == Teams.Survivor then
@@ -50,9 +57,7 @@ function module.GameStarting(Time)
 	ShopUi.DisableUi()
 	InventoryUi.Disable()
 end
-ReplicatedStorage.Event:WaitForChild("GameStarted").OnClientEvent:Connect(function(Time)
-	module.GameStarting(Time)
-end)
+
 CanGameStart.OnClientEvent:Connect(function(CanStart: boolean, Time)
 	if CanStart then
 		TextAnnoucments:GameCanStartInCD(Time)

@@ -72,6 +72,7 @@ function Shop.DisableUi()
 	RigUI.DisableViewPort()
 end
 function Shop.LoadCharacters()
+	ViewportFrame.Visible = false
 	if not ClientData.Data then
 		return
 	end
@@ -99,6 +100,7 @@ function Shop.LoadCharacters()
 end
 
 function Shop.LoadEmotes()
+	ViewportFrame.Visible = false
 	if not ClientData.Data then
 		return
 	end
@@ -127,6 +129,7 @@ function Shop.LoadEmotes()
 end
 
 function Shop.LoadRobuxShop()
+	ViewportFrame.Visible = false
 	Shop.DeleteAllObjects()
 	local Ui = GamepassShopUi:Clone()
 	Ui.Parent = ScrollFrame

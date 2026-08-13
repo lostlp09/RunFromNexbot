@@ -59,6 +59,7 @@ function InventoryUi.ChangeVisibility()
 	end
 end
 function InventoryUi.LoadCharacters()
+	ViewportFrame.Visible = false
 	print("Werde ich ausgeführt")
 	DeleteEverying()
 	RigAnimator.RigInVisible()
@@ -83,6 +84,7 @@ function InventoryUi.LoadCharacters()
 end
 function InventoryUi.LoadEmotes()
 	DeleteEverying()
+	ViewportFrame.Visible = false
 	for key, obtained in pairs(ClientData.Data["EmoteOwned"]) do
 		if obtained then
 			local UiFrame = game.ReplicatedStorage.Ui.InventoryPresets.EmoteSelect:Clone()
@@ -144,6 +146,7 @@ function InventoryUi.EmoteMoreDetailed(EmoteName)
 	local Connection
 	Connection = Structure.Equip.Activated:Connect(function()
 		Inventory.Enabled = false
+		ViewportFrame.Visible = false
 
 		print(ClientData.Data)
 		EmoteScript.ChangeEmote(EmoteName)
@@ -156,6 +159,7 @@ function InventoryUi.Disable()
 	DeleteEverying()
 	ClearConnections(Connections)
 	RigAnimator.RigInVisible()
+	ViewportFrame.Visible = false
 end
 -------------------------------------------------- BUTTONS
 return InventoryUi
