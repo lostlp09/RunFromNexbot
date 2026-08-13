@@ -53,7 +53,7 @@ function localabiltys.Rocket(player: Player)
 	end)
 end
 
-function localabiltys.FieldOfView()
+function localabiltys.Laugh()
 	print("Cool")
 end
 function localabiltys.PorkCall()

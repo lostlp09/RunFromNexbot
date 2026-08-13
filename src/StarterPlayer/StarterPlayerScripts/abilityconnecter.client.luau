@@ -101,6 +101,11 @@ game.ReplicatedStorage.localnextbotevents.giveproperties.OnClientEvent:Connect(
 		end
 	end
 )
+ReplicatedStorage:WaitForChild("Event"):WaitForChild("GameEnded").OnClientEvent:Connect(function()
+	Ability1 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1 }
+	Ability2 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1 }
+	Ability3 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1 }
+end)
 
 game.ReplicatedStorage.runlocalabiltys.OnClientEvent:Connect(function(ability: string, other)
 	for _, value in Abilitys do
@@ -151,10 +156,4 @@ game.ReplicatedStorage.runlocalabiltys.OnClientEvent:Connect(function(ability: s
 		end
 	end
 	localAbilitys[ability](player, other)
-end)
-game.ReplicatedStorage.localnextbotevents.ResetCamerOffset.OnClientEvent:Connect(function()
-	if player.Character then
-		local humanoid: Humanoid = player.Character:FindFirstChild("Humanoid")
-		humanoid.CameraOffset = Vector3.zero
-	end
 end)

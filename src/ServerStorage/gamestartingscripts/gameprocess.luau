@@ -46,6 +46,7 @@ end
 function gameprocess.gameend()
 	GameProcessState = "Ended"
 	KillTracker.StopKilling()
+	Nextbotplayer.RemoveAll()
 	if #Survival >= 1 then
 		for _, player in Survival do
 			print(player)
@@ -87,7 +88,6 @@ function gameprocess.gameend()
 	Workspace:FindFirstChild("Map"):Destroy()
 	table.clear(Nextbots)
 	table.clear(Survival)
-	Nextbotplayer.RemoveAll()
 	task.spawn(function()
 		gameprocess.wait_for_game()
 	end)
@@ -231,7 +231,7 @@ function gameprocess.playerdied(player: Player)
 		--0
 		local GainedTokens = (GameDuration - GameEndsIn) * 0.5
 		PlayerData[player.UserId]["Currency"] += GainedTokens
-		ReplicatedStorage.Event.Lose:FireClient(player, Teams.Nextbots, GainedTokens)
+		ReplicatedStorage.Event.Lose:FireClient(player, Teams.Survivor, GainedTokens)
 		game.ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireClient(player, PlayerData[player.UserId]["Currency"])
 	end
 	local NextBotIndex = table.find(Nextbots, player)

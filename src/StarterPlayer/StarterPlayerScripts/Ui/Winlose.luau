@@ -12,6 +12,7 @@ function DestroyOldFrame()
 end
 function module.activate()
 	ReplicatedStorage.Event.Win.OnClientEvent:Connect(function(Team)
+		print(Team)
 		DestroyOldFrame()
 		local Clone = WinLoseScreen:Clone()
 		Clone.Parent = WinLoseFrame

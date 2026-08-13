@@ -39,7 +39,7 @@ function abilityicon.Rocket(ui, index, Name)
 	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")
 	AbilityText.Text = NextbotUiInfo[Name].Ability["Ability" .. tostring(index)]
 end
-function abilityicon.FieldOfView(ui, index, Name)
+function abilityicon.Laugh(ui, index, Name)
 	local imageobject: ImageButton = ui.Canvas.ImageButton
 	imageobject.Image = NextbotUiInfo.Royal.AbilityIcons[index]
 	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")

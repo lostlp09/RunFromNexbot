@@ -12,7 +12,11 @@ function Nextbotgiver.addplayer(player: Player, whattype)
 end
 function Nextbotgiver.RemoveAll()
 	for _, Nextbot in Nextbotgiver.Nextbot_player do
-		Nextbot.attackrequest:Disconnect()
+		print(Nextbot)
+		if #Nextbot > 0 then
+			print("ERROR ERROR STH WENT WRONG", Nextbot, Nextbotgiver.Nextbot_player)
+		end
+		Nextbot.GameEnded()
 	end
 	table.clear(Nextbotgiver.Nextbot_player)
 end

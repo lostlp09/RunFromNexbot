@@ -6,10 +6,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Teams = game:GetService("Teams")
-local Workspace = game:GetService("Workspace")
 local SurvivorNextbotAlive = require(ServerStorage.Rojo_Scripts.gamestartingscripts.SurvivorNextbotAlive)
-local Survivors = {}
-local Nextbots = {}
 
 function NormalAbilitys.new(Ability: string, classproperties)
 	if NormalAbilitys[Ability] == nil then
@@ -41,7 +38,7 @@ end
 
 NormalAbilitys.Data = {
 	Rocket = { cooldown = 10, Name = "Rocket", CharacterName = "Royal" },
-	FieldOfView = { cooldown = 20, Name = "FieldOfView", CharacterName = "Royal" },
+	Laugh = { cooldown = 20, Name = "Laugh", CharacterName = "Royal" },
 	PorkCall = { cooldown = 20, Name = "PorkCall", CharacterName = "Pork" },
 	SpeedBoost = { cooldown = 20, Name = "SpeedBoost", CharacterName = "Sanic" },
 	Thunder = { cooldown = 20, Name = "Thunder", CharacterName = "Sanic" },
@@ -84,7 +81,6 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		local Indicator = game.ReplicatedStorage.Models.Rocket.Indicator:Clone()
 		table.remove(PossibleCandidates, RandomIndex)
 		Indicator.Parent = game.Workspace
-		Indicator.Name = "THunderIndicator"
 		print(RayCast)
 		local direction = RayCast.Normal
 		Indicator:PivotTo(
@@ -98,12 +94,14 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		local RocketStarthight = 10
 		Killbox.CanTouch = true
 		local Time = 3
-		RocketModel:PivotTo(root.CFrame * CFrame.new(0, 10, 0))
+
 		game.Debris:AddItem(RocketModel, 4)
 		local Connection
 		local RunServiceCon
-		local StartVelocityY = ((PlayerPosition.Y - RocketStarthight) + Gravity * math.pow(Time, 2) * (1 / 2)) / Time
-		local Direction = Vector3.new(PlayerPosition.X - root.Position.X, 0, PlayerPosition.Z - root.Position.Z)
+		local StarterPosition = root.Position + Vector3.new(0, 10, 0)
+		RocketModel:PivotTo(CFrame.new(StarterPosition))
+		local StartVelocityY = ((PlayerPosition.Y - StarterPosition.Y) + Gravity * math.pow(Time, 2) * (1 / 2)) / Time
+		local Direction = Vector3.new(PlayerPosition.X - StarterPosition.X, 0, PlayerPosition.Z - StarterPosition.Z)
 		local Distance = Direction.Magnitude
 		local DirectionUnit = Direction.Unit
 		local Speed = Distance / Time
@@ -167,7 +165,7 @@ function NormalAbilitys.Rocket(playerclassproperties)
 	end
 end
 
-function NormalAbilitys.FieldOfView(playerclassproperties)
+function NormalAbilitys.Laugh(playerclassproperties)
 	local player: Player = playerclassproperties.player
 
 	local Character = player.Character
@@ -232,10 +230,11 @@ function NormalAbilitys.SpeedBoost(playerclassproperties)
 	)
 end
 function NormalAbilitys.Thunder(playerclassproperties)
-	local Indicator = ReplicatedStorage.Models.Thunder.Indicator:Clone()
+	local Indicator = ReplicatedStorage.Models.Thunder.Indicator
 	local ThunderEffekt = ReplicatedStorage.VFX.Thunder
 	local CFrames = {}
 	for _, player: Player in SurvivorNextbotAlive.GetSurvivor() do
+		local IndicatorClone = Indicator:Clone()
 		local ThunderEffectPart = ThunderEffekt:Clone()
 		local Character = player.Character
 
@@ -250,9 +249,9 @@ function NormalAbilitys.Thunder(playerclassproperties)
 			Vector3.new(0, -500, 0),
 			Raycastprop
 		)
-		Indicator:PivotTo(CFrame.lookAt(root.Position, RayCast.Normal))
-		Indicator.Parent = game.Workspace
-		game.Debris:AddItem(Indicator, 1.2)
+		IndicatorClone:PivotTo(CFrame.lookAt(root.Position, root.Position + RayCast.Normal))
+		IndicatorClone.Parent = game.Workspace
+		game.Debris:AddItem(IndicatorClone, 1.2)
 		table.insert(CFrames, root.CFrame)
 		ThunderEffectPart.Position = Vector3.new(root.Position.X, root.Position.Y + 190, root.Position.Z)
 		ThunderEffectPart.Parent = game.Workspace

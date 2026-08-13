@@ -82,8 +82,8 @@ function module:RoundCountdown(Time)
 	if LobbyGui:FindFirstChild("GameCountDown") then
 		return
 	end
-	if LobbyGui:FindFirstChild("GameStartsInCD") then
-		LobbyGui:FindFirstChild("GameStartsInCD").Visible = false
+	if LobbyGui:FindFirstChild("GameCanStartInCD") then
+		LobbyGui:FindFirstChild("GameCanStartInCD").Visible = false
 	end
 	local TextObject = self.CreateText()
 	TextObject.Name = "GameCountDown"

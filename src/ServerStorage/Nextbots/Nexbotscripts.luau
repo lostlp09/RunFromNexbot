@@ -66,8 +66,14 @@ function Nextbot.new(
 		print("RunAbility")
 		self[Ability].RunAbility()
 	end)
+	function self.GameEnded()
+		if self.attackrequest then
+			self.attackrequest:Disconnect()
+		end
+		table.clear(self)
+	end
 	self.gamestartet = nil
-	self.gamestartet = game.ReplicatedStorage.Start.Event:Connect(function()
+	self.gamestartet = game.ReplicatedStorage.Start.Event:Once(function()
 		print(self.player)
 		local root = self.player.Character:FindFirstChild("HumanoidRootPart")
 
@@ -87,7 +93,6 @@ function Nextbot.new(
 		Beam.FaceCamera = true
 		Beam.Parent = root
 		Beam.Transparency = NumberSequence.new(0, 0)
-		self.gamestartet:Disconnect()
 	end)
 
 	print(self)
