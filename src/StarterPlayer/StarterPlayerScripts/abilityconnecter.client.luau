@@ -64,10 +64,10 @@ uip.InputBegan:Connect(function(input)
 		return
 	end
 	local currentTime = os.clock()
-	if input.KeyCode == Enum.KeyCode.E then
+	if input.KeyCode == Enum.KeyCode.E or Enum.KeyCode.ButtonY then
 		Attack1(currentTime)
 	end
-	if input.KeyCode == Enum.KeyCode.Q then
+	if input.KeyCode == Enum.KeyCode.Q or Enum.KeyCode.ButtonB then
 		Attack2(currentTime)
 	end
 	if input.KeyCode == Enum.KeyCode.B then

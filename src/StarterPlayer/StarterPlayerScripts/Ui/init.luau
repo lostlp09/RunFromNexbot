@@ -5,6 +5,7 @@ local LobbyGui = player.PlayerGui:WaitForChild("LobbyGui")
 local InventoryButton = LobbyGui.Frame.Inv
 local ButtonEffectModule = require(script.ButtonEffectModule)
 local InventoryUi = require(script.InventoryUi)
+local ClientData = require(script.Parent.ClientData)
 local ShopScript = require(script.ShopUi)
 local Winlose = require(script.Winlose)
 local ShopUi = player.PlayerGui:FindFirstChild("ShopUi")
@@ -17,6 +18,10 @@ function Ui.activate()
 	Winlose.activate()
 end
 InventoryButton.Activated:Connect(function()
+	print(ClientData)
+	if ClientData.Data["EmoteOwned"] == nil or ClientData.Data["NextbotOwned"] == nil then
+		return
+	end
 	print("Test")
 	InventoryUi.ChangeVisibility()
 	if InventorySreenGUi.Enabled then
@@ -36,6 +41,9 @@ InventoryButton.Activated:Connect(function()
 	end
 end)
 ShopButton.Activated:Connect(function()
+	if ClientData.Data["EmoteOwned"] == nil or ClientData.Data["NextbotOwned"] == nil then
+		return
+	end
 	ShopScript.ChangeVisiblity()
 	if ShopUi.Enabled then
 		local Mobileui = player.PlayerGui:FindFirstChild("MobileUi")

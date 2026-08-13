@@ -245,14 +245,12 @@ function NormalAbilitys.Thunder(playerclassproperties)
 			Vector3.new(0, -500, 0),
 			Raycastprop
 		)
-		IndicatorClone:PivotTo(CFrame.lookAt(root.Position, root.Position + RayCast.Normal))
+		IndicatorClone:PivotTo(CFrame.lookAt(RayCast.Position, RayCast.Position + RayCast.Normal))
 		IndicatorClone.Parent = game.Workspace
 		game.Debris:AddItem(IndicatorClone, 1.2)
 		table.insert(CFrames, root.CFrame)
-		ThunderEffectPart.Position = Vector3.new(root.Position.X, root.Position.Y + 190, root.Position.Z)
-		ThunderEffectPart.Parent = game.Workspace
 		task.delay(1, function()
-			ThunderEffectPart.Position = Vector3.new(root.Position.X, root.Position.Y + 190, root.Position.Z)
+			ThunderEffectPart.Position = Vector3.new(RayCast.X, RayCast.Position.Y + 190, RayCast.Position.Z)
 			ThunderEffectPart.Parent = game.Workspace
 			task.delay(2, function()
 				ThunderEffectPart.Beam1.Enabled = false

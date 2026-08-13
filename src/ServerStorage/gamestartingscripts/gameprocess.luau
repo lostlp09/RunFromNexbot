@@ -78,6 +78,10 @@ function gameprocess.gameend()
 				player.Character:PivotTo(
 					Workspace:FindFirstChild("Lobby"):FindFirstChild("Spawn").CFrame * CFrame.new(0, 4, 0)
 				)
+				local Humanoid = player.Character:FindFirstChild("Humanoid")
+				if Humanoid then
+					Humanoid.WalkSpeed = 16
+				end
 			end
 		end
 		player.Team = game.Teams.lobby
