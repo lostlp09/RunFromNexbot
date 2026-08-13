@@ -15,14 +15,17 @@ local GameEndsIn = 800
 local GameDuration = 300
 local GameProcessState = "Waiting"
 --local OldMap  ="none"
-local GameStartingInSeconds = 99 --if bigger then 15 then it means they are still waiting -if 0 That means The Game Started
+local GameStartingInSeconds = 15 --if bigger then 15 then it means they are still waiting -if 0 That means The Game Started
 gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
+	if #gameprocess.players <= 1 then
+		ReplicatedStorage.Event.CanGameStart:FireAllClients(false)
+	end
 	repeat
 		GameProcessState = "Waiting"
 		task.wait()
 	until #gameprocess.players > 1
-	ReplicatedStorage.Event.CanGameStart:FireAllClients(true, 15)
+	ReplicatedStorage.Event.CanGameStart:FireAllClients(true, GameStartingInSeconds)
 	GameProcessState = "Starting"
 	for i = 15, 0, -1 do
 		GameStartingInSeconds = i
@@ -35,7 +38,7 @@ function gameprocess.wait_for_game()
 		end
 		task.wait(1)
 	end
-	GameStartingInSeconds = 99
+	GameStartingInSeconds = 15
 	gameprocess.Startgame()
 end
 function gameprocess.activate()
@@ -220,14 +223,16 @@ function gameprocess.GameCountDown()
 end
 function gameprocess.removeplayer(player)
 	table.remove(gameprocess.players, table.find(gameprocess.players, player))
-	gameprocess.playerdied(player)
+	gameprocess.playerdied(player, true)
 end
-function gameprocess.playerdied(player: Player)
+function gameprocess.playerdied(player, playerLeft)
 	if not gameprocess.gamerunning then
 		print("Yooloo")
 		return
 	end
-	player.Team = Teams.lobby
+	if not playerLeft then
+		player.Team = Teams.lobby
+	end
 	local SurvivorIndex = table.find(Survival, player)
 	if SurvivorIndex then
 		table.remove(Survival, SurvivorIndex)
