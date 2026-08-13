@@ -1,6 +1,9 @@
 local Reuseableabilitys = {}
 Reuseableabilitys.__index = Reuseableabilitys
-
+--local SoundCreator = require(ReplicatedStorage.Shared.SoundCreator)
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundCreator = require(ReplicatedStorage.Shared.SoundCreator)
 Reuseableabilitys.Data = {
 	ShapeShift = { cooldown = 15, Name = "ShapeShift", cooldown2 = 3, TimeUntilAutoBack = 10, CharacterName = "Pork" },
 }
@@ -55,7 +58,6 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 	local humanoid: Humanoid = Character:FindFirstChild("Humanoid")
 	local noobcolor = game.ReplicatedStorage.noobbodycolor
 	print(abilityproperties)
-	local playerservice = game:GetService("Players")
 	local function makeplayerinv(player)
 		local Invisiblecostumes = { "Head", "Torso", "Left Arm", "Right Arm", "Left Leg", "Right Leg" }
 		for _, part in player.Character:GetChildren() do
@@ -88,13 +90,15 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 		Character = player.Character
 		Character:SetAttribute("ShapeShifting", false)
 		makeplayerinv(player)
+		local Object = root:FindFirstChild("FollowMusic")
+		if not Object then
+			SoundCreator.newFollwingSound(classproperties.Audio, player.UserId, -1, 1, false)
+		end
 		game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, "ShapeShift", true)
 		Beam.Name = "Beam"
 		Beam.Enabled = true
 		print(classproperties)
-		humanoid.WalkSpeed = classproperties["speed"]
-
-		game.ReplicatedStorage.playeranimation.disableanimation:FireClient(player)
+		humanoid.WalkSpeed = classproperties.WalkSpeed
 		abilityproperties.reuse = false
 		task.delay(1, function()
 			abilityproperties.running = false
@@ -103,7 +107,12 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 	abilityproperties.reuse = not abilityproperties.reuse
 	if not SecondAbility then
 		Character:SetAttribute("ShapeShifting", true)
-		--game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, "ShapeShift", false)
+		game.ReplicatedStorage.runlocalabiltys:FireClient(classproperties.player, "ShapeShift", false)
+		local Object = root:FindFirstChild("FollowMusic")
+		if Object then
+			Object:Destroy()
+		end
+
 		abilityproperties.running = true
 		local Survivors = {}
 		for _, Enemy: Player in game.Players:GetChildren() do
@@ -116,7 +125,7 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 		task.wait(0.5)
 		Beam.Enabled = false
 		makeplayervis(player)
-		Character.Rojo_Scripts:FindFirstChild("othermovment").Enabled = true
+
 		if #Survivors < 1 then
 			ColorChanger(bodycolor, noobcolor)
 			local Shirt: Shirt = Character:FindFirstChild("Shirt")
@@ -128,7 +137,7 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 			local randomindex = math.random(1, #Survivors)
 			local randomplayer: number = Survivors[randomindex]
 			print(randomplayer)
-			local humanDescription = playerservice:GetHumanoidDescriptionFromUserIdAsync(5412018595) --player.UserId //Code doesnt work because it doesnt work with test acc i guess lol
+			local humanDescription = Players:GetHumanoidDescriptionFromUserIdAsync(5412018595) --player.UserId //Code doesnt work because it doesnt work with test acc i guess lol
 			humanoid:ApplyDescriptionAsync(humanDescription, Enum.AssetTypeVerification.Default)
 		end
 		task.delay(10, function()

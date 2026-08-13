@@ -6,6 +6,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Teams = game:GetService("Teams")
+local SoundCreator = require(ReplicatedStorage.Shared.SoundCreator)
 local SurvivorNextbotAlive = require(ServerStorage.Rojo_Scripts.gamestartingscripts.SurvivorNextbotAlive)
 
 function NormalAbilitys.new(Ability: string, classproperties)
@@ -91,7 +92,6 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		)
 		local PlayerPosition: Vector3 = EnemyRootpart.Position
 		local Gravity = workspace.Gravity
-		local RocketStarthight = 10
 		Killbox.CanTouch = true
 		local Time = 3
 
@@ -223,11 +223,7 @@ function NormalAbilitys.SpeedBoost(playerclassproperties)
 			Humanoid.WalkSpeed = playerclassproperties.WalkSpeed
 		end)
 	end
-	game.ReplicatedStorage.Event.SoundPlayer.ChangeFollowingMusic:FireAllClients(
-		player.UserId,
-		"rbxassetid://139377079452785",
-		10
-	)
+	SoundCreator.ChangeFollowingMusic(player.UserId, "rbxassetid://139377079452785", 10)
 end
 function NormalAbilitys.Thunder(playerclassproperties)
 	local Indicator = ReplicatedStorage.Models.Thunder.Indicator

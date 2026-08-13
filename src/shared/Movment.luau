@@ -58,7 +58,7 @@ function MovmentShared.RunFunction()
 							or Character:GetAttribute("SlidingPressed")
 							or Humanoid:GetState() == Enum.HumanoidStateType.Freefall
 							or Humanoid:GetState() == Enum.HumanoidStateType.Jumping
-							or (player.Team ~= Teams.Survivor and not Character:GetAttribute("Shapeshifting"))
+							or (player.Team ~= Teams.Survivor and not Character:GetAttribute("ShapeShifting"))
 							or Character:GetAttribute("SlidingCooldown") < 5
 						then
 							continue
@@ -97,7 +97,7 @@ function MovmentShared.RunFunction()
 				elseif Input.Name == "Sprint" then
 					local IsSliding = Character:GetAttribute("Sliding")
 					local IsSprinting = Character:GetAttribute("Sprinting")
-					if player.Team ~= Teams.Survivor then
+					if player.Team ~= Teams.Survivor and not Character:GetAttribute("ShapeShifting") then
 						continue
 					end
 					if isPressed then

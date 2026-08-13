@@ -16,7 +16,7 @@ AbilitySurvconsequence.Consequence = {
 
 	["PorkCall"] = function()
 		local PorkUi = ReplicatedStorage.Ui.AbilityConsequence:FindFirstChild("JpCall"):Clone()
-		PorkUi.Parent = player:FindFirstChild("PlayerGui"):FindFirstChild("MainButtons")
+		PorkUi.Parent = player:FindFirstChild("PlayerGui"):FindFirstChild("LobbyGui")
 		local Image: ImageLabel = PorkUi.Image
 		task.spawn(SoundCreator.States["rbxassetid://99933358254659"])
 		task.spawn(function()

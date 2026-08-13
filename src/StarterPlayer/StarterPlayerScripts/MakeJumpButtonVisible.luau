@@ -37,11 +37,13 @@ function module.activate()
 end
 
 function module.TurnMovmentButtons(bool)
+	print("Werde ich Executed ", bool)
 	if SprintButton then
 		SprintButton.Visible = bool
 	end
 	if SlideButton then
 		SlideButton.Visible = bool
 	end
+	print(SlideButton, SprintButton)
 end
 return module

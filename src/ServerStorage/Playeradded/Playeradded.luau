@@ -3,6 +3,7 @@ local Playeradded = {}
 local gameProcessScript = require(script.Parent.Parent.gamestartingscripts.gameprocess)
 local DataSave = require(script.Parent.Save)
 local Data = require(script.Parent.PlayerData)
+local Save = require(script.Parent.Save)
 local InputFolder = ReplicatedStorage:WaitForChild("CustomInputs")
 local UiUpdatedArray = {}
 
@@ -56,13 +57,11 @@ function Playeradded.activate()
 			velocity.Parent = root
 		end)
 
-		DataSave.DeleteData(player)
 		local Playerdata = DataSave.LoadData(player)
 		player.Team = game.Teams.lobby
 		task.spawn(function()
 			gameProcessScript.addplayer(player)
 		end)
-
 		Data.addplayer(player, Playerdata)
 	end)
 

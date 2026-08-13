@@ -1,13 +1,16 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Nextbotgiver = {}
+local SoundCreator = require(ReplicatedStorage.Shared.SoundCreator)
 local Nextbots = require(script.Parent.Nextbotarray)
 local Nextbotclass = require(script.Parent.Nexbotscripts)
 Nextbotgiver.Nextbot_player = {}
+
 function Nextbotgiver.addplayer(player: Player, whattype)
 	print("ich klappe", Nextbotgiver)
 	local array = Nextbots[whattype]
 	local nextbot =
 		Nextbotclass.new(player, array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8])
-	game.ReplicatedStorage.Event.SoundPlayer.AddFollowMusic:FireAllClients(player.UserId, nextbot.Audio)
+	SoundCreator.newFollwingSound(nextbot.Audio, player.UserId, -1, 1, false)
 	Nextbotgiver.Nextbot_player[player.UserId] = nextbot
 end
 function Nextbotgiver.RemoveAll()

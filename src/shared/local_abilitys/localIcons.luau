@@ -23,15 +23,9 @@ function abilityicon.ShapeShift(ui, index, Name)
 	imageobject.Image = NextbotUiInfo[Name].AbilityIcons[index]
 	local AbilityText: TextLabel = ui:FindFirstChild("AbilityName")
 	AbilityText.Text = NextbotUiInfo[Name].Ability["Ability" .. tostring(index)]
-	local TextLabel: TextLabel = Instance.new("TextLabel")
+	local TextLabel = ui:FindFirstChild("Cooldown")
 	TextLabel.Parent = ui
-	TextLabel.Position = imageobject.Position + UDim2.fromScale(ui.Position.X.Scale / 2 * -1, -0.3)
 	TextLabel.Text = "10"
-	TextLabel.Name = "Cooldown"
-	TextLabel.Visible = true
-	TextLabel.TextSize = 20
-	TextLabel.BorderSizePixel = 0
-	TextLabel.Visible = false
 end
 function abilityicon.Rocket(ui, index, Name)
 	local imageobject: ImageButton = ui.Canvas.ImageButton

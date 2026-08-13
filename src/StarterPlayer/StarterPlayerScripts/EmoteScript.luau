@@ -26,10 +26,12 @@ local EmoteChoose = 0
 local RigFolder = RootFrame:WaitForChild("ViewportFrame"):WaitForChild("Rigs")
 local ControllerInput: InputAction = Input.Parent:FindFirstChild("EmoteWheel")
 local EquipOrMobile = RootFrame.EquipOrMobile
-local RequestEmote: RemoteEvent = ReplicatedStorage.Event.RequestEmote
+local RequestEmote: RemoteEvent = ReplicatedStorage:WaitForChild("Event"):WaitForChild("RequestEmote")
+local EmoteChanged = ReplicatedStorage.Event:WaitForChild("EmoteEquiped")
 local Equiping = false
 local Camera: Camera = Workspace.CurrentCamera
 local ViewportFrame = Player.PlayerGui:WaitForChild("Rig").ViewportFrame
+
 module.IsInGame = false
 EmoteSelectConnections = {}
 print("EmoteScript ClientData:", ClientData, tostring(ClientData):match("0x%x+"))
@@ -236,7 +238,6 @@ function module.activate()
 end
 
 function module.ChangeEmote(key)
-	print("howdy")
 	UiGradiant.Enabled = false
 	Equiping = true
 	module.WheelOnOrOFF(true)
@@ -260,10 +261,13 @@ function module.ChangeEmote(key)
 		else
 			local Con
 			Con = Button.Activated:Connect(function()
+				print("")
 				EquipOrMobile.Visible = false
-				local Index = Button.Name
+				local Index: string = Button.Name
 				Equiping = false
 				ClientData.Data.EmoteEquiped[Index] = key
+				print("HALLO FIRE EmoteChanged")
+				EmoteChanged:FireServer(Index, key)
 				if not module.IsInGame then
 					Player.PlayerGui.inventory.Enabled = true
 					ViewportFrame.Visible = true
