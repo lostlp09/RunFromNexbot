@@ -17,10 +17,9 @@ This game uses Roblox newest feature called Server Authority.Because of that the
 
 # Keybinds
 
-W/S/A/D : Movment
-Ctr  Sprint
-C : Slide
-
+W/S/A/D : Movment,
+Ctr  Sprint,
+C : Slid,
 Ability Keybinds : Q/E
 
 
