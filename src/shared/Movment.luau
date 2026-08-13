@@ -11,10 +11,14 @@ if RunService:IsClient() then
 end
 local raycastparams = RaycastParams.new()
 raycastparams.FilterType = Enum.RaycastFilterType.Exclude
+local PlayerSlidedCooldown = {}
 function MovmentShared.RunFunction()
-	print("Do i even get Created")
-	RunService:BindToSimulation(function()
+	RunService:BindToSimulation(function(delta)
 		for _, player in Players:GetPlayers() do
+			if RunService:IsClient() and Players.LocalPlayer ~= player then
+				continue
+			end
+
 			local Character = player.Character
 			if not Character then
 				continue
@@ -24,6 +28,11 @@ function MovmentShared.RunFunction()
 			if not Root then
 				continue
 			end
+			if Character:GetAttribute("SlidingCooldown") == nil then
+				Character:SetAttribute("SlidingCooldown", 10)
+			else
+				Character:SetAttribute("SlidingCooldown", Character:GetAttribute("SlidingCooldown") + delta)
+			end
 			local InputsFolder = player:FindFirstChild("CustomInputs")
 			local Humanoid: Humanoid = Character:FindFirstChild("Humanoid")
 			raycastparams.FilterDescendantsInstances = { Character }
@@ -31,7 +40,6 @@ function MovmentShared.RunFunction()
 
 			if raycastforfloor then
 				if raycastforfloor.Instance:GetAttribute("Pad") then
-					print("JumpadJA")
 					Root.AssemblyLinearVelocity =
 						Vector3.new(Root.AssemblyLinearVelocity.X, 200, Root.AssemblyLinearVelocity.Z)
 				end
@@ -50,7 +58,8 @@ function MovmentShared.RunFunction()
 							or Character:GetAttribute("SlidingPressed")
 							or Humanoid:GetState() == Enum.HumanoidStateType.Freefall
 							or Humanoid:GetState() == Enum.HumanoidStateType.Jumping
-							or (player.Team == Teams.Nextbots and not Character:GetAttribute("Shapeshifting"))
+							or (player.Team ~= Teams.Survivor and not Character:GetAttribute("Shapeshifting"))
+							or Character:GetAttribute("SlidingCooldown") < 5
 						then
 							continue
 						end
@@ -58,13 +67,14 @@ function MovmentShared.RunFunction()
 						if not raycastforfloor then
 							continue
 						end
+
 						direction = Root.CFrame.LookVector:Cross(raycastforfloor.Normal):Cross(raycastforfloor.Normal)
 						local AlignOrientation = Root:FindFirstChild("AlignOrientationSlide")
 						local Velocity = Root:FindFirstChild("SlideVelocity")
 						if not Velocity then
 							continue
 						end
-
+						Character:SetAttribute("SlidingCooldown", 0)
 						AlignOrientation.CFrame = CFrame.lookAt(Root.Position, Root.Position + Root.CFrame.LookVector)
 						AlignOrientation.Enabled = true
 						Velocity.Enabled = true
@@ -87,6 +97,9 @@ function MovmentShared.RunFunction()
 				elseif Input.Name == "Sprint" then
 					local IsSliding = Character:GetAttribute("Sliding")
 					local IsSprinting = Character:GetAttribute("Sprinting")
+					if player.Team ~= Teams.Survivor then
+						continue
+					end
 					if isPressed then
 						if not IsSprinting and not IsSliding then
 							Character:SetAttribute("Sprinting", true)

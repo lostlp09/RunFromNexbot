@@ -5,6 +5,7 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local MobileGui = ReplicatedStorage.Ui:WaitForChild("MobileUi")
 local SprintButton: ImageButton
+local SlideButton: ImageButton
 function module.isOnMobile()
 	return UserInputService.TouchEnabled
 end
@@ -32,11 +33,15 @@ function module.activate()
 			EnableMobileGui()
 		end)
 	end
+	SlideButton = player.PlayerGui:WaitForChild("LobbyGui"):WaitForChild("GameUi").SlideButtonContainer
 end
 
-function module.TurnSprintButton(bool)
+function module.TurnMovmentButtons(bool)
 	if SprintButton then
 		SprintButton.Visible = bool
+	end
+	if SlideButton then
+		SlideButton.Visible = bool
 	end
 end
 return module

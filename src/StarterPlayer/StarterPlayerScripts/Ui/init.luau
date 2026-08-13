@@ -6,12 +6,15 @@ local InventoryButton = LobbyGui.Frame.Inv
 local ButtonEffectModule = require(script.ButtonEffectModule)
 local InventoryUi = require(script.InventoryUi)
 local ShopScript = require(script.ShopUi)
+local Winlose = require(script.Winlose)
 local ShopUi = player.PlayerGui:FindFirstChild("ShopUi")
 local ShopButton = LobbyGui.Frame.ShopButton
 local InventorySreenGUi = player.PlayerGui.inventory
+
 function Ui.activate()
 	ShopScript.activate()
 	InventoryUi.activate()
+	Winlose.activate()
 end
 InventoryButton.Activated:Connect(function()
 	print("Test")

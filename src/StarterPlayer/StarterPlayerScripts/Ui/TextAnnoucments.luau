@@ -66,6 +66,9 @@ function module.LoadingText(TextObject: TextLabel)
 	end
 end
 function module.WaitForPlayers()
+	if LobbyGui:FindFirstChild("WaitForPlayers") then
+		return
+	end
 	local TextObject: TextLabel = module.CreateText()
 	TextObject.Name = "WaitForPlayers"
 	TextObject.Text = "Waiting for players."
@@ -75,6 +78,9 @@ function module.WaitForPlayers()
 	end)
 end
 function module:RoundCountdown(Time)
+	if LobbyGui:FindFirstChild("GameCountDown") then
+		return
+	end
 	local TextObject = self.CreateText()
 	TextObject.Name = "GameCountDown"
 	task.spawn(function()
@@ -82,6 +88,9 @@ function module:RoundCountdown(Time)
 	end)
 end
 function module:GameCanStartInCD(Time)
+	if LobbyGui:FindFirstChild("GameCanStartInCD") then
+		return
+	end
 	local TextObject = self.CreateText()
 	TextObject.Name = "GameCanStartInCD"
 	task.spawn(function()

@@ -12,16 +12,18 @@ local KillTracker = require(script.Parent.KillTracker)
 local SurvivorNextbotAlive = require(script.Parent.SurvivorNextbotAlive)
 local Maps = game.ReplicatedStorage.Maps
 local GameEndsIn = 800
+local GameDuration = 30
+local GameProcessState = "Waiting"
 --local OldMap  ="none"
 local GameStartingInSeconds = 99 --if bigger then 15 then it means they are still waiting -if 0 That means The Game Started
 gameprocess.gamerunning = false
 function gameprocess.wait_for_game()
 	repeat
-		task.wait(1)
-
+		GameProcessState = "Waiting"
+		task.wait()
 	until #gameprocess.players > 1
 	ReplicatedStorage.Event.CanGameStart:FireAllClients(true, 15)
-
+	GameProcessState = "Starting"
 	for i = 15, 0, -1 do
 		GameStartingInSeconds = i
 		if #gameprocess.players < 1 then
@@ -42,22 +44,53 @@ function gameprocess.activate()
 	end)
 end
 function gameprocess.gameend()
+	GameProcessState = "Ended"
 	KillTracker.StopKilling()
+	if #Survival >= 1 then
+		for _, player in Survival do
+			print(player)
+			PlayerData[player.UserId]["Currency"] += 200
+			ReplicatedStorage.Event.Win:FireClient(player, Teams.Survivor)
+			game.ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireClient(
+				player,
+				PlayerData[player.UserId]["Currency"]
+			)
+		end
+	else
+		for _, player in Nextbots do
+			PlayerData[player.UserId]["Currency"] += 500
+			ReplicatedStorage.Event.Win:FireClient(player, Teams.Nextbots)
+			game.ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireClient(
+				player,
+				PlayerData[player.UserId]["Currency"]
+			)
+		end
+	end
+	ReplicatedStorage.Event.GameEnded:FireAllClients()
 
 	gameprocess.gamerunning = false
+	task.wait(2)
 	print(gameprocess.players)
 	for _, player: Player in game.Players:GetChildren() do
+		if player.Team == Teams.Survivor then
+			if player.Character then
+				player.Character:PivotTo(
+					Workspace:FindFirstChild("Lobby"):FindFirstChild("Spawn").CFrame * CFrame.new(0, 4, 0)
+				)
+			end
+		end
 		player.Team = game.Teams.lobby
 	end
-	task.wait(10)
 	for _, player in Nextbots do
 		player.Character:FindFirstChild("Humanoid").Health = 0
 	end
-
+	Workspace:FindFirstChild("Map"):Destroy()
 	table.clear(Nextbots)
 	table.clear(Survival)
 	Nextbotplayer.RemoveAll()
-	gameprocess.wait_for_game()
+	task.spawn(function()
+		gameprocess.wait_for_game()
+	end)
 end
 
 function gameprocess.makeplayerinv(player)
@@ -122,7 +155,12 @@ function gameprocess.Startgame()
 			table.insert(pickableplayers, player)
 		end
 	end
-
+	if not (#pickableplayers > 1) then
+		task.spawn(function()
+			gameprocess.wait_for_game()
+		end)
+	end
+	GameProcessState = "Started"
 	print(pickableplayers)
 	for i = 1, 1, 1 do --1 , math.floor(#pickableplayers/2),  do
 		print(i)
@@ -143,8 +181,10 @@ function gameprocess.Startgame()
 	SurvivorNextbotAlive.SetSurvivor(Survival)
 
 	gameprocess.TeleportPlayers()
-	ReplicatedStorage.Event.GameStarted:FireAllClients(300)
-
+	ReplicatedStorage.Event.GameStarted:FireAllClients(GameDuration)
+	task.spawn(function()
+		gameprocess.GameCountDown()
+	end)
 	game.ReplicatedStorage.Start:Fire()
 end
 function gameprocess.addplayer(player: Player)
@@ -152,18 +192,20 @@ function gameprocess.addplayer(player: Player)
 	local Root = Character:WaitForChild("HumanoidRootPart")
 	if Character and Root then
 		table.insert(gameprocess.players, player)
-		if GameStartingInSeconds > 15 then
+		task.wait()
+		print(GameProcessState)
+		if GameProcessState == "Waiting" then
 			ReplicatedStorage.Event.CanGameStart:FireClient(player, false)
-		elseif GameStartingInSeconds > 0 then
+		elseif GameProcessState == "Starting" then
 			ReplicatedStorage.Event.CanGameStart:FireClient(player, true, GameStartingInSeconds)
-		elseif GameEndsIn > 0 then
+		elseif GameProcessState == "" then
 			ReplicatedStorage.Event.GameStarted:FireClient(player, GameEndsIn)
 		end
 	end
 end
 
 function gameprocess.GameCountDown()
-	for index = 300, 0, -1 do --300 seconds = 5 min do
+	for index = GameDuration, 0, -1 do --300 seconds = 5 min do
 		GameEndsIn = index
 		task.wait(1)
 		if not gameprocess.gamerunning then
@@ -186,10 +228,16 @@ function gameprocess.playerdied(player: Player)
 	if SurvivorIndex then
 		table.remove(Survival, SurvivorIndex)
 		SurvivorNextbotAlive.RemoveSurvivor(SurvivorIndex)
+		--0
+		local GainedTokens = (GameDuration - GameEndsIn) * 0.5
+		PlayerData[player.UserId]["Currency"] += GainedTokens
+		ReplicatedStorage.Event.Lose:FireClient(player, Teams.Nextbots, GainedTokens)
+		game.ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireClient(player, PlayerData[player.UserId]["Currency"])
 	end
 	local NextBotIndex = table.find(Nextbots, player)
 	if NextBotIndex then
 		table.remove(Nextbots, NextBotIndex)
+		SurvivorNextbotAlive.RemoveNextbot(NextBotIndex)
 	end
 	print(#Survival)
 	print(#Nextbots)

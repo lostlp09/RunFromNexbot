@@ -1,3 +1,4 @@
+local module = {}
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundCreator = require(ReplicatedStorage.Shared.SoundCreator)
@@ -14,3 +15,5 @@ ReplicatedStorage.Event:FindFirstChild("SoundPlayer").PlayEmoteAudio.OnClientEve
 		---TODO CHANGE VOLUME TO PLAYER SETTINGS CLient Sided so i dont always need to update the player settings date .
 	end
 end)
+
+return module

@@ -191,10 +191,12 @@ function module.activate()
 					if not Player.Character or not Player.Character:FindFirstChild("Humanoid") then
 						Camera.CameraType = Enum.CameraType.Custom
 						Connection:Disconnect()
+						return
 					end
 					if Player.Character:FindFirstChild("Humanoid").Health == 0 then
 						Camera.CameraType = Enum.CameraType.Custom
 						Connection:Disconnect()
+						return
 					end
 					UiGradiant.Enabled = true
 					Camera.CFrame = CameraCFrame

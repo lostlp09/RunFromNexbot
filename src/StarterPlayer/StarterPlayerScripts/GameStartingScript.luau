@@ -12,44 +12,40 @@ local player = Players.LocalPlayer
 local Character = player.Character or player.CharacterAdded:Wait()
 local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
 local LobbyScreenGui = player.PlayerGui:WaitForChild("LobbyGui")
+local GameStartGui = LobbyScreenGui:WaitForChild("GameUi")
 local CanGameStart = game.ReplicatedStorage.Event:WaitForChild("CanGameStart")
 local GameStarted = false
 print("ICH WURDE REQUIRED")
+
+local function TurnLobbyUi(bool: boolean)
+	for _, ui in player.PlayerGui:WaitForChild("LobbyGui").Frame:GetChildren() do
+		if ui:IsA("GuiButton") or ui.Name == "Currency" then
+			ui.Visible = bool
+		end
+	end
+end
+function module.activate()
+	ReplicatedStorage.Event:WaitForChild("GameEnded").OnClientEvent:Connect(function()
+		module.GameEnded(true)
+	end)
+end
 function module.GameEnded(DeleteTimer: boolean)
-	if MakeJumpButtonVisible.isOnMobile then
-		MakeJumpButtonVisible.TurnSprintButton(true)
-	end
-	for _, ui in player.PlayerGui:WaitForChild("LobbyGui"):GetChildren() do
-		ui.Visible = true
-	end
+	TurnLobbyUi(true)
+	MakeJumpButtonVisible.TurnMovmentButtons(false)
 	if DeleteTimer then
 		print("Todo")
 	end
 end
-
 Humanoid.Died:Connect(function()
-	module.GameEnded(true)
+	module.GameEnded(false)
 end)
-
-local function TurnLobbyUi(bool: boolean)
-	for _, ui in player.PlayerGui:WaitForChild("LobbyGui"):GetChildren() do
-		ui.Visible = bool
-	end
-end
 function module.GameStarting(Time)
 	TextAnnoucments:RoundCountdown(Time)
-	ReplicatedStorage.Event:WaitForChild("GameEnded").OnClientEvent:Connect(function()
-		module.GameEnded(true)
-	end)
+	TurnLobbyUi(false)
 	if player.Team == Teams.lobby then
 		return
-	elseif player.Team == Teams.Nextbots then
-		print("WAS PASSIERT HIER")
-		EmoteScript.WheelOnOrOFF(false)
-		if MakeJumpButtonVisible.isOnMobile() then
-			MakeJumpButtonVisible.TurnSprintButton(false)
-		end
-		TurnLobbyUi(false)
+	elseif player.Team == Teams.Survivor then
+		MakeJumpButtonVisible.TurnMovmentButtons(true)
 	end
 	ShopUi.DisableUi()
 	InventoryUi.Disable()

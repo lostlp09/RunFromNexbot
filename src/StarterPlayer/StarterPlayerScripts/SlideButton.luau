@@ -5,7 +5,8 @@ local module = {}
 local player = Players.LocalPlayer
 local Connection
 local RunningTween: Tween
-local SlideButton = player.PlayerGui.LobbyGui:WaitForChild("SlideButtonContainer").CooldownCanvas.SlideButton
+local SlideButton =
+	player.PlayerGui:WaitForChild("LobbyGui"):WaitForChild("GameUi").SlideButtonContainer.CooldownCanvas.SlideButton
 local Progressbar = SlideButton.Parent.Progressbar
 local InputBinding: InputBinding = player:WaitForChild("CustomInputs").ExtraMovement.Slide.Mobile
 local tweenInfo = TweenInfo.new(5, Enum.EasingStyle.Linear, Enum.EasingDirection.In, 0, false, 0)
