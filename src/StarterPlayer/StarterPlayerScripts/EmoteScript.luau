@@ -71,7 +71,6 @@ function module.WheelOnOrOFF(boolean: boolean)
 				Connect:Disconnect()
 			end
 		end
-		Camera.CameraType = Enum.CameraType.Custom
 	end
 
 	local wheelTween = TweenService:Create(RootFrame, WheelTweenInfo, WheelTweenProperties)
@@ -147,7 +146,7 @@ end
 function module.activate()
 	print("EmoteScriptAktiviert")
 	Input.StateChanged:Connect(function(bool: boolean)
-		local CameraCFrame = Camera.CFrame
+		print()
 		if bool then
 			if Player.Team == Teams.Nextbots then
 				return
@@ -172,7 +171,6 @@ function module.activate()
 				local RigAnimator = RigHumanoid:FindFirstChild("Animator")
 				EmotePlayer.Play(Emote, RigAnimator)
 			end
-			Camera.CameraType = Enum.CameraType.Scriptable
 
 			if Equiping or Player.PlayerGui.ShopUi.Enabled == true or Player.PlayerGui.inventory.Enabled then
 				return
@@ -181,32 +179,26 @@ function module.activate()
 				Connection = RunService.RenderStepped:Connect(function()
 					UiGradiant.Enabled = true
 					if not Player.Character or not Player.Character:FindFirstChild("Humanoid") then
-						Camera.CameraType = Enum.CameraType.Custom
 						Connection:Disconnect()
 					end
 					if Player.Character:FindFirstChild("Humanoid").Health == 0 then
-						Camera.CameraType = Enum.CameraType.Custom
 						Connection:Disconnect()
 					end
 
-					Camera.CFrame = CameraCFrame
 					local Vector2 = ControllerInput:GetState()
 					ControllerPcActivateEmote(Vector2.X * -1, Vector2.Y)
 				end)
 			else
 				Connection = RunService.RenderStepped:Connect(function()
 					if not Player.Character or not Player.Character:FindFirstChild("Humanoid") then
-						Camera.CameraType = Enum.CameraType.Custom
 						Connection:Disconnect()
 						return
 					end
 					if Player.Character:FindFirstChild("Humanoid").Health == 0 then
-						Camera.CameraType = Enum.CameraType.Custom
 						Connection:Disconnect()
 						return
 					end
 					UiGradiant.Enabled = true
-					Camera.CFrame = CameraCFrame
 					local midpoint = Vector2.new(ScreeGui.AbsoluteSize.X / 2, ScreeGui.AbsoluteSize.Y / 2)
 					local X = midpoint.X - mouse.X
 					local Y = midpoint.Y - mouse.Y
@@ -219,7 +211,6 @@ function module.activate()
 			module.WheelOnOrOFF(true)
 		else
 			print("Bring me home")
-			Camera.CameraType = Enum.CameraType.Custom
 			if Connection then
 				if Player.Team == Teams.Nextbots then
 					return
