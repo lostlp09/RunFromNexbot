@@ -3,9 +3,9 @@ local StarterPlayer = game:GetService("StarterPlayer")
 local Teams = game:GetService("Teams")
 local uip = game:GetService("UserInputService")
 local Camera = game.Workspace:WaitForChild("Camera")
-local Ability1 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1 }
-local Ability2 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1 }
-local Ability3 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1 }
+local Ability1 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1, Button = false }
+local Ability2 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1, Button = false }
+local Ability3 = { lastused = -15, cooldown = 3, Name = "", first_or_second = 1, Button = false }
 local Abilitys = { Ability1, Ability2, Ability3 }
 local player = game.Players.LocalPlayer
 local Tweenservice = game:GetService("TweenService")
@@ -123,8 +123,23 @@ game.ReplicatedStorage.runlocalabiltys.OnClientEvent:Connect(function(ability: s
 					task.spawn(function()
 						value.Button.Cooldown.Visible = true
 						for i = value.TimeUntilAutoBack, 1, -1 do
+							if value.Button then
+								print("Button exist")
+								if not value.Button:FindFirstChild("Cooldown") then
+									return
+								end
+							else
+								return
+							end
 							value.Button.Cooldown.Text = tostring(i)
 							task.wait(1)
+						end
+						if value.Button then
+							if not value.Button:FindFirstChild("Cooldown") then
+								return
+							end
+						else
+							return
 						end
 						value.Button.Cooldown.Visible = false
 					end)

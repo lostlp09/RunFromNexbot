@@ -85,8 +85,12 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 		playercolor.TorsoColor = bodycolors.TorsoColor
 	end
 	local function Secondbilityfunc()
-		print("second function ?")
+		if not (#classproperties > 1) then
+			print("Nextbot doenst exist")
+			return
+		end
 
+		print("second function ?")
 		Character = player.Character
 		Character:SetAttribute("ShapeShifting", false)
 		makeplayerinv(player)

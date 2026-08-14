@@ -9,8 +9,8 @@ local EmoteScript = require(script.Parent.EmoteScript)
 local MakeJumpButtonVisible = require(script.Parent.MakeJumpButtonVisible)
 local module = {}
 local player = Players.LocalPlayer
-local Character = player.Character or player.CharacterAdded:Wait()
-local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
+local Character = player.Character
+
 local LobbyScreenGui = player.PlayerGui:WaitForChild("LobbyGui")
 local GameStartGui = LobbyScreenGui:WaitForChild("GameUi")
 local CanGameStart = game.ReplicatedStorage.Event:WaitForChild("CanGameStart")
@@ -41,10 +41,22 @@ function module.GameEnded(DeleteTimer: boolean)
 		print("Todo")
 	end
 end
-Humanoid.Died:Connect(function()
-	module.GameEnded(false)
-	EmoteScript.IsInGame = false
+if Character then
+	local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
+	Humanoid.Died:Connect(function()
+		module.GameEnded(false)
+		EmoteScript.IsInGame = false
+	end)
+end
+
+player.CharacterAdded:Connect(function(Character)
+	local Humanoid = Character:WaitForChild("Humanoid")
+	Humanoid.Died:Connect(function()
+		module.GameEnded(false)
+		EmoteScript.IsInGame = false
+	end)
 end)
+
 function module.GameStarting(Time)
 	TextAnnoucments:RoundCountdown(Time)
 	TurnLobbyUi(false)
@@ -62,6 +74,7 @@ CanGameStart.OnClientEvent:Connect(function(CanStart: boolean, Time)
 	if CanStart then
 		TextAnnoucments:GameCanStartInCD(Time)
 	else
+		print("Test")
 		TextAnnoucments.WaitForPlayers()
 	end
 end)

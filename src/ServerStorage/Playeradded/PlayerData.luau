@@ -6,7 +6,7 @@ local Startertable = {
 	["NextbotOwned"] = { ["Royal"] = true, ["Sanic"] = false, ["Pork"] = false },
 	["EmoteOwned"] = { ["Crazy"] = false, ["Shuffle"] = false, ["Chill"] = false },
 	["EmoteEquiped"] = { ["1"] = false, ["2"] = false, ["3"] = false, ["4"] = false },
-	["Currency"] = 1000,
+	["Currency"] = 0,
 }
 
 local function DeepCopy(GivenTable)

@@ -11,7 +11,10 @@ function KillTracker.StartKilling(Nextbots)
 	Overlaps.FilterDescendantsInstances = Characters
 	Overlaps.FilterType = Enum.RaycastFilterType.Exclude
 	while Track do
-		for _, character in Characters do
+		for _, character: Part in Characters do
+			if character:GetAttribute("ShapeShifting") then
+				continue
+			end
 			local root = character:FindFirstChild("HumanoidRootPart")
 			if root then
 				for _, Part in workspace:GetPartBoundsInBox(root.CFrame, BoxSize, Overlaps) do

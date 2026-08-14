@@ -11,8 +11,8 @@ local PlayerData = require(ServerStorage.Rojo_Scripts.Playeradded.PlayerData)
 local KillTracker = require(script.Parent.KillTracker)
 local SurvivorNextbotAlive = require(script.Parent.SurvivorNextbotAlive)
 local Maps = game.ReplicatedStorage.Maps
-local GameEndsIn = 800
-local GameDuration = 300
+local GameEndsIn = 180
+local GameDuration = 180
 local GameProcessState = "Waiting"
 --local OldMap  ="none"
 local GameStartingInSeconds = 15 --if bigger then 15 then it means they are still waiting -if 0 That means The Game Started
@@ -29,8 +29,9 @@ function gameprocess.wait_for_game()
 	GameProcessState = "Starting"
 	for i = 15, 0, -1 do
 		GameStartingInSeconds = i
-		if #gameprocess.players < 1 then
+		if #gameprocess.players <= 1 then
 			ReplicatedStorage.Event.CanGameStart:FireAllClients(false)
+			GameStartingInSeconds = 15
 			task.spawn(function()
 				gameprocess.wait_for_game()
 			end)
@@ -48,11 +49,11 @@ function gameprocess.activate()
 end
 function gameprocess.gameend()
 	GameProcessState = "Ended"
+	GameEndsIn = 180
 	KillTracker.StopKilling()
 	Nextbotplayer.RemoveAll()
 	if #Survival >= 1 then
 		for _, player in Survival do
-			print(player)
 			PlayerData[player.UserId]["Currency"] += 200
 			ReplicatedStorage.Event.Win:FireClient(player, Teams.Survivor)
 			game.ReplicatedStorage.Event.GivePlayerCurrentCurrency:FireClient(
@@ -74,7 +75,6 @@ function gameprocess.gameend()
 
 	gameprocess.gamerunning = false
 	task.wait(2)
-	print(gameprocess.players)
 	for _, player: Player in game.Players:GetChildren() do
 		if player.Team == Teams.Survivor then
 			if player.Character then
@@ -168,12 +168,9 @@ function gameprocess.Startgame()
 		end)
 	end
 	GameProcessState = "Started"
-	print(pickableplayers)
-	for i = 1, 1, 1 do --1 , math.floor(#pickableplayers/2),  do
-		print(i)
+	for _ = 1, 1, 1 do --1 , math.floor(#pickableplayers/2),  do
 		local mathrandom = math.random(1, #pickableplayers)
 		local player = pickableplayers[mathrandom]
-		print(player)
 		player.Team = game.Teams.Nextbots
 		gameprocess.makeplayerinv(player)
 		table.insert(Nextbots, player)
@@ -200,7 +197,6 @@ function gameprocess.addplayer(player: Player)
 	if Character and Root then
 		table.insert(gameprocess.players, player)
 		task.wait()
-		print(GameProcessState)
 		if GameProcessState == "Waiting" then
 			ReplicatedStorage.Event.CanGameStart:FireClient(player, false)
 		elseif GameProcessState == "Starting" then
@@ -248,11 +244,7 @@ function gameprocess.playerdied(player, playerLeft)
 		table.remove(Nextbots, NextBotIndex)
 		SurvivorNextbotAlive.RemoveNextbot(NextBotIndex)
 	end
-	print("HowManySurvivorsareLiving")
-	print(Survival)
-	print(Nextbots)
 	if #Survival < 1 or #Nextbots < 1 then
-		print("game_end")
 		gameprocess.gameend()
 	end
 end

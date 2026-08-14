@@ -51,9 +51,7 @@ function NormalAbilitys.Rocket(playerclassproperties)
 	local root = Character:FindFirstChild("HumanoidRootPart")
 	local PossibleCandidates = {}
 	for _, Enemyplayer: Player in game.Players:GetChildren() do
-		print("run my little boy")
 		if Enemyplayer.Team == game.Teams.Survivor and Enemyplayer.Character then
-			print(Enemyplayer, Enemyplayer.Team, "Very Important")
 			table.insert(PossibleCandidates, Enemyplayer)
 		end
 	end
@@ -65,7 +63,6 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		local RandomIndex = math.random(1, #PossibleCandidates)
 		local Randomplayer = PossibleCandidates[RandomIndex]
 		local EnemyRootpart: BasePart = Randomplayer.Character.HumanoidRootPart
-		print(Randomplayer, "is the Random Player")
 		local Raycastprop = RaycastParams.new()
 		Raycastprop.CollisionGroup = "player"
 		local RayCast = game.Workspace:Raycast(
@@ -82,7 +79,6 @@ function NormalAbilitys.Rocket(playerclassproperties)
 		local Indicator = game.ReplicatedStorage.Models.Rocket.Indicator:Clone()
 		table.remove(PossibleCandidates, RandomIndex)
 		Indicator.Parent = game.Workspace
-		print(RayCast)
 		local direction = RayCast.Normal
 		Indicator:PivotTo(
 			CFrame.lookAt(
@@ -127,7 +123,6 @@ function NormalAbilitys.Rocket(playerclassproperties)
 			end
 			hitregister = true
 			Connection:Disconnect()
-			print("wie oft wird der Code ausgeführt")
 			local Humanoid: Humanoid = Part.Parent:FindFirstChild("Humanoid")
 			if Humanoid then
 				local playerTouched: Player = PlayerService:GetPlayerFromCharacter(Humanoid.Parent)
@@ -177,11 +172,9 @@ function NormalAbilitys.Laugh(playerclassproperties)
 	local SoundEvent: UnreliableRemoteEvent = ReplicatedStorage.Event.SoundPlayer.PlaySound
 	SoundEvent:FireAllClients("rbxassetid://8417230527", Character:FindFirstChild("HumanoidRootPart").Position)
 	for _, Part in workspace:GetPartsInPart(Hitbox) do
-		print(Part)
 		local Humanoid = Part.Parent:FindFirstChild("Humanoid")
 		if Humanoid then
 			local EnemyPlayer: Player = PlayerService:GetPlayerFromCharacter(Part.Parent)
-			print(EnemyPlayer.UserId)
 			if EnemyPlayer.Team ~= game.Teams.Survivor or HittedPlayers[EnemyPlayer] then
 				continue
 			end
