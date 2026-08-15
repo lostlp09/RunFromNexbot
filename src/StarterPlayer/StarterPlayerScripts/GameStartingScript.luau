@@ -1,7 +1,9 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local StarterPlayer = game:GetService("StarterPlayer")
 local Teams = game:GetService("Teams")
+local MusicChaseTracker = require(ReplicatedStorage.Shared.MusicChaseTracker)
 local InventoryUi = require(StarterPlayer.StarterPlayerScripts.Rojo_Scripts.Ui.InventoryUi)
 local ShopUi = require(StarterPlayer.StarterPlayerScripts.Rojo_Scripts.Ui.ShopUi)
 local TextAnnoucments = require(StarterPlayer.StarterPlayerScripts.Rojo_Scripts.Ui.TextAnnoucments)
@@ -10,11 +12,13 @@ local MakeJumpButtonVisible = require(script.Parent.MakeJumpButtonVisible)
 local module = {}
 local player = Players.LocalPlayer
 local Character = player.Character
+local InGameMusic = "rbxassetid://81154452186957"
 
-local LobbyScreenGui = player.PlayerGui:WaitForChild("LobbyGui")
-local GameStartGui = LobbyScreenGui:WaitForChild("GameUi")
 local CanGameStart = game.ReplicatedStorage.Event:WaitForChild("CanGameStart")
-local GameStarted = false
+
+local BackGroundMusic = "rbxassetid://80849508346318"
+local BackGroundMusicPlayer: Sound = SoundService:FindFirstChild("BackGroundMusic")
+
 print("ICH WURDE REQUIRED")
 
 local function TurnLobbyUi(bool: boolean)
@@ -36,6 +40,8 @@ function module.activate()
 end
 function module.GameEnded(DeleteTimer: boolean)
 	TurnLobbyUi(true)
+	BackGroundMusicPlayer.SoundId = BackGroundMusic
+	BackGroundMusicPlayer:Play()
 	MakeJumpButtonVisible.TurnMovmentButtons(false)
 	if DeleteTimer then
 		print("Todo")
@@ -49,8 +55,8 @@ if Character then
 	end)
 end
 
-player.CharacterAdded:Connect(function(Character)
-	local Humanoid = Character:WaitForChild("Humanoid")
+player.CharacterAdded:Connect(function(Character1)
+	local Humanoid = Character1:WaitForChild("Humanoid")
 	Humanoid.Died:Connect(function()
 		module.GameEnded(false)
 		EmoteScript.IsInGame = false
@@ -58,6 +64,8 @@ player.CharacterAdded:Connect(function(Character)
 end)
 
 function module.GameStarting(Time)
+	BackGroundMusicPlayer.SoundId = InGameMusic
+	BackGroundMusicPlayer:Play()
 	TextAnnoucments:RoundCountdown(Time)
 	TurnLobbyUi(false)
 	EmoteScript.WheelOnOrOFF(false)
@@ -65,6 +73,7 @@ function module.GameStarting(Time)
 		return
 	elseif player.Team == Teams.Survivor then
 		MakeJumpButtonVisible.TurnMovmentButtons(true)
+		MusicChaseTracker.instantiate()
 	end
 	ShopUi.DisableUi()
 	InventoryUi.Disable()

@@ -141,6 +141,8 @@ function gameprocess.TeleportPlayers()
 	end)
 end
 function gameprocess.Startgame()
+	GameProcessState = "StartingSoon"
+
 	while true do
 		local OriginalPostion: Vector3 = Maps.OriginalPosition.Value
 		local MapArray = Maps:GetChildren()
@@ -165,31 +167,42 @@ function gameprocess.Startgame()
 	if not (#pickableplayers > 1) then
 		task.spawn(function()
 			gameprocess.wait_for_game()
+			return
 		end)
 	end
-	GameProcessState = "Started"
+
 	for _ = 1, 1, 1 do --1 , math.floor(#pickableplayers/2),  do
 		local mathrandom = math.random(1, #pickableplayers)
 		local player = pickableplayers[mathrandom]
 		player.Team = game.Teams.Nextbots
-		gameprocess.makeplayerinv(player)
 		table.insert(Nextbots, player)
 		table.remove(pickableplayers, mathrandom)
-		Nextbotplayer.addplayer(player, PlayerData[player.UserId].NextbotEquiped) --test code because i still dont have a save system
 	end
 	for _, player: Player in pickableplayers do
 		player.Team = game.Teams.Survivor
+		table.insert(Survival, player)
 	end
 	Survival = table.clone(pickableplayers)
 	SurvivorNextbotAlive.SetNextbot(Nextbots)
 	SurvivorNextbotAlive.SetSurvivor(Survival)
 
-	gameprocess.TeleportPlayers()
-	ReplicatedStorage.Event.GameStarted:FireAllClients(GameDuration)
-	task.spawn(function()
-		gameprocess.GameCountDown()
+	task.delay(2, function()
+		for _, player in Nextbots do
+			gameprocess.makeplayerinv(player)
+			Nextbotplayer.addplayer(player, PlayerData[player.UserId].NextbotEquiped)
+		end
+		if #Nextbots < 1 or #Survival < 0 then
+			task.spawn(gameprocess.wait_for_game())
+			return
+		end
+		GameProcessState = "Started"
+		gameprocess.TeleportPlayers()
+		ReplicatedStorage.Event.GameStarted:FireAllClients(GameDuration)
+		task.spawn(function()
+			gameprocess.GameCountDown()
+		end)
+		game.ReplicatedStorage.Start:Fire()
 	end)
-	game.ReplicatedStorage.Start:Fire()
 end
 function gameprocess.addplayer(player: Player)
 	local Character = player.Character or player.CharacterAdded:Wait()
@@ -201,7 +214,7 @@ function gameprocess.addplayer(player: Player)
 			ReplicatedStorage.Event.CanGameStart:FireClient(player, false)
 		elseif GameProcessState == "Starting" then
 			ReplicatedStorage.Event.CanGameStart:FireClient(player, true, GameStartingInSeconds)
-		elseif GameProcessState == "" then
+		elseif GameProcessState == "Started" then
 			ReplicatedStorage.Event.GameStarted:FireClient(player, GameEndsIn)
 		end
 	end

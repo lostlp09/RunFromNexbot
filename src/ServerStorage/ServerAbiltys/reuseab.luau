@@ -85,7 +85,8 @@ function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilitypro
 		playercolor.TorsoColor = bodycolors.TorsoColor
 	end
 	local function Secondbilityfunc()
-		if not (#classproperties > 1) then
+		if not classproperties.Audio then
+			print(classproperties)
 			print("Nextbot doenst exist")
 			return
 		end
