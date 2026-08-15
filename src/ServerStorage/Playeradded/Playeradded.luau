@@ -50,7 +50,6 @@ function Playeradded.activate()
 			velocity.Enabled = false
 			velocity.Parent = root
 		end)
-
 		local Playerdata = DataSave.LoadData(player)
 		player.Team = game.Teams.lobby
 		task.spawn(function()

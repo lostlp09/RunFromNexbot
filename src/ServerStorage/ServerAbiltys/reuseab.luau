@@ -51,6 +51,7 @@ end
 -------------------------------------------------------------------------------Attacks
 
 function Reuseableabilitys.ShapeShift(classproperties, SecondAbility, abilityproperties)
+	SoundCreator.UiSoundEffect("Transform")
 	local player: Player = classproperties.player
 	local Character = player.Character
 	local Beam = Character:WaitForChild("HumanoidRootPart"):WaitForChild("Beam")

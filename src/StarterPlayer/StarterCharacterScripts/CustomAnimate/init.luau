@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundCreator = require(ReplicatedStorage.Shared.SoundCreator)
 local module = {}
 local Character = script.Parent.Parent
 local Humanoid: Humanoid = Character.Humanoid or Character:WaitForChild("Humanoid")
@@ -54,7 +55,13 @@ function module.Initialize()
 		end
 	end)
 end
-
+if RunService:IsClient() then
+	Character:GetAttributeChangedSignal("Sliding"):Connect(function()
+		if Character:GetAttribute("Sliding") then
+			SoundCreator.UiSoundEffect("Slide")
+		end
+	end)
+end
 if RunService:IsServer() then
 	Character:GetAttributeChangedSignal("Emoting"):Connect(function()
 		local NotEmoting = not Character:GetAttribute("Emoting")

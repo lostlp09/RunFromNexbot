@@ -21,9 +21,11 @@ local GamepassShopUi = game.ReplicatedStorage.Ui.GamePassShop
 local MarketPlaceService = game:GetService("MarketplaceService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local EmotePlayer = require(ReplicatedStorage.Shared.EmotePlayer.EmotePlayer)
+local SoundCreator = require(ReplicatedStorage.Shared.SoundCreator)
 local function Purchase(Itemtype, key, Connection, Instance)
 	local AllowedToBuy = game.ReplicatedStorage.Event.RemoteFunction.Purchase:InvokeServer(Itemtype, key)
 	if AllowedToBuy then
+		SoundCreator.UiSoundEffect("Purchase")
 		if Itemtype == "Character" then
 			ClientData.Data.NextbotOwned[key] = true
 		elseif Itemtype == "Emote" then
@@ -91,7 +93,7 @@ function Shop.LoadCharacters()
 		else
 			local Connection
 			Connection = Clone:FindFirstChild("Button").MouseButton1Up:Connect(function()
-				print("ICH WURDE GEDRÜCKt")
+				SoundCreator.UiSoundEffect("Button")
 				OpenmoreDetailed("Character", key, Connection, Clone)
 				table.insert(ButtonConnections, Connection)
 			end)
@@ -121,6 +123,7 @@ function Shop.LoadEmotes()
 		else
 			local Connection
 			Connection = Clone:FindFirstChild("Button").MouseButton1Up:Connect(function()
+				SoundCreator.UiSoundEffect("Button")
 				OpenmoreDetailed("Emote", key, Connection, Clone)
 				table.insert(ButtonConnections, Connection)
 			end)
@@ -174,19 +177,23 @@ function Shop.ChangeVisiblity()
 	end
 end
 function Shop.activate()
-	player.PlayerGui.ShopUi.Categorybar.Character.MouseButton1Down:Connect(function()
+	player.PlayerGui.ShopUi.Categorybar.Character.Activated:Connect(function()
+		SoundCreator.UiSoundEffect("Button")
 		Shop.LoadCharacters()
 	end)
-	player.PlayerGui.ShopUi.Categorybar.Emotes.MouseButton1Up:Connect(function()
+	player.PlayerGui.ShopUi.Categorybar.Emotes.Activated:Connect(function()
 		print("Connection wurde ausgeführt")
+		SoundCreator.UiSoundEffect("Button")
 		Shop.LoadEmotes()
 	end)
-	player.PlayerGui.ShopUi.Categorybar.Coins.MouseButton1Up:Connect(function()
+	player.PlayerGui.ShopUi.Categorybar.Coins.Activated:Connect(function()
+		SoundCreator.UiSoundEffect("Button")
 		Shop.LoadRobuxShop()
 	end)
 end
 
 function Shop.PurchaseItem(Id)
+	SoundCreator.UiSoundEffect("Button")
 	MarketPlaceService:PromptProductPurchase(player, Id)
 end
 function Shop.DeleteAllObjects()

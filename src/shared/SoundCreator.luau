@@ -79,8 +79,18 @@ function SoundCreator.new2DSoundEffect(Id, speed, returnable)
 	if returnable then
 		return SoundInstance
 	end
-	SoundInstance.Ended:Wait()
-	SoundInstance:Destroy()
+	SoundInstance.Ended:Once(function(a0: string)
+		SoundInstance:Destroy()
+	end)
+	return
+end
+function SoundCreator.UiSoundEffect(Name: string)
+	local Sound: Sound = SoundService.PreloadedSounds:FindFirstChild(Name):Clone()
+	Sound.Parent = SoundService
+	Sound:Play()
+	Sound.Ended:Once(function()
+		Sound:Destroy()
+	end)
 end
 SoundCreator.States = {
 

@@ -25,6 +25,7 @@ function localabiltys.Beam(player: Player)
 	end)
 end
 function localabiltys.ShapeShift(player: Player, secondAbility)
+	SoundCreator.UiSoundEffect("Transform")
 	print("Werde ich executed frage ? ", secondAbility)
 	if secondAbility then
 		MakeJumpButtonVisible.TurnMovmentButtons(false)
