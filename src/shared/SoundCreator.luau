@@ -33,14 +33,13 @@ function SoundCreator.new(Id, position: Vector3, speed, returnable)
 	Sound.SoundId = Id
 	Sound:Play()
 	if not returnable then
-		Sound.Ended:Wait()
-		SoundBlock:Destroy()
+		Sound.Ended:Once(function()
+			SoundBlock:Destroy()
+		end)
 		return nil
 	else
 		return SoundBlock
 	end
-
-	return SoundBlock
 end
 function SoundCreator.newFollwingSound(Id, UserId: number, duration: number, speed: number, returnable: boolean)
 	local SoundBlock = ReplicatedStorage.Event:FindFirstChild("SoundPlayer").FollowingSoundBlock:Clone()

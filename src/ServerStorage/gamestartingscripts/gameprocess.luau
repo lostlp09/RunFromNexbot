@@ -186,7 +186,7 @@ function gameprocess.Startgame()
 	SurvivorNextbotAlive.SetNextbot(Nextbots)
 	SurvivorNextbotAlive.SetSurvivor(Survival)
 
-	task.delay(2, function()
+	task.delay(3, function()
 		for _, player in Nextbots do
 			gameprocess.makeplayerinv(player)
 			Nextbotplayer.addplayer(player, PlayerData[player.UserId].NextbotEquiped)
