@@ -1,6 +1,6 @@
 # Be_a_Nextbot_Killer
 
-
+# Youtube Preview : https://youtu.be/eXEzSNDzGtM
 # Important 
 I had a old Repo where i didnt used Vs Code which meant i used a lot of hackluc lapse for recording (didnt put the tracked time into my project) and tracked my Time in roblox studio.
 In the old Repo you can see my progress through Journals /lapse or by downloading some files in the version folder.
