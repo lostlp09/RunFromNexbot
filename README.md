@@ -1,7 +1,7 @@
 # Be_a_Nextbot_Killer
 
 
-#Youtube preview(Click image to play)
+# Youtube preview(Click image to play)
 [![Preview](https://img.youtube.com/vi/eXEzSNDzGtM/0.jpg)](https://www.youtube.com/watch?v=eXEzSNDzGtM)
 
 
@@ -13,12 +13,12 @@
 
 
 
-
+# Info!
 I had a old Repo where i didnt used Vs Code which meant i used a lot of hackluc lapse for recording (didnt put the tracked time into my project) and tracked my Time in roblox studio.
 In the old Repo you can see my progress through Journals /lapse or by downloading some files in the version folder.
-
 You can Check my old Repo out
 https://github.com/lostlp09/multyplayernextbotgame
+
 # Guide
 You are a killer or a survivor.As a survivor you need to stay alive for 5 minutes.You got Movment Abilitys like sliding and Sprinting.
 As a Nextbot you job is it to kill all of the Survivors in 5 minutes.You can pick between three Character with unique Abilitys.
@@ -33,6 +33,7 @@ W/S/A/D : Movment,
 Ctr  Sprint,
 C : Slid,
 Ability Keybinds : Q/E
+B : Emoting,
 
 
 # Why did i make this game
