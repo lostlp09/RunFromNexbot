@@ -1,10 +1,10 @@
 # Be_a_Nextbot_Killer
 
-<div align="center">
-## Youtube preview(Click image to play)
+
+#Youtube preview(Click image to play)
 [![Preview](https://img.youtube.com/vi/eXEzSNDzGtM/0.jpg)](https://www.youtube.com/watch?v=eXEzSNDzGtM)
 
-</div>
+
 
 
 
